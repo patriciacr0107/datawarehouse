@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #eee;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to top, #fff 10%, rgba(93, 42, 141, 0.4) 90%)
+    no-repeat;
+  background-color: #f5f5f5;
+}
+
+.container {
+  display: flex;
+  width: 45%;
+  padding: 10%;
+  margin: 50px auto 50px auto;
+}
+
+h1,
+.container-fluid > .navbar-brand {
+  font-family: 'Kaushan Script', cursive;
+}
+
+.form-signin {
+  margin: auto;
+  width: 100%;
+}
+
+.container-fluid > .navbar-brand {
+  color: #f5f5f5;
+}
+
+.navbar-collapse {
+  display: flex;
+  justify-content: flex-end;
+}

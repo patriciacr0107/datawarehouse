@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehouse</title>
+    <link rel="stylesheet" href="css/datawarehouse.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="contenedor-principal">
+        <div id='menu'>
+            <nav>
+                <div class="nav">
+                    <a href="#home" class="link-home">Data Warehouse</a>
+                    <div class="menu">
+                        <ul>
+                            <li><a href="#contactos" onclick="cambiarModo()" class="item-menu">Contactos</a></li>
+                            <li><a href="#companias" onclick="mostrarFavoritos()" id="fav-mnu-desk"
+                                    class="item-menu">Compañías</a>
+                            </li>
+                            <li><a href="#usuarios" onclick="mostrarSeccionMisGifos()" id="misgif-mnu"
+                                    class="item-menu">Usuarios</a></li>
+                            <li><a href="#ciudad" onclick="mostrarSeccionMisGifos()" id="misgif-mnu"
+                                    class="item-menu">Región / Ciudad</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="contenedor-contactos" id="contenedor-usuarios">
+            <h1 class="titulo-seccion">Usuarios</h1>
+            <div class="opciones">
+                <a href="#contenedor-edicion">
+                    <input type="button" value="Agregar usuario" class="btn-principal">
+                </a>
+            </div>
+            <div class="contenedor-busqueda">
+                <div class="contenedor-busqueda-items">
+                    <input type="text" name="" id="" class="input">
+                    <div class="btn-buscar">
+                        <span class="material-icons-outlined material-icons btn-buscar-icon">
+                            search
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="datos-usuario" class="contenedor-datos">
+                <table class="datos-contactos" cellpadding="2" cellspacing="5">
+                    <tr>
+                        <th>
+                            <div class="titulo">
+                                <span>Nombre</span>
+                                <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
+                                    import_export
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="titulo">
+                                <span>Apellido</span>
+                                <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
+                                    import_export
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="titulo">
+                                <span>Email</span>
+                                <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
+                                    import_export
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="titulo">
+                                <span>Perfil</span>
+                                <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
+                                    import_export
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="titulo">Acciones</div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>Soledad</td>
+                        <td>Castro</td>
+                        <td>soledad@gmail.com</td>
+                        <td>Admin</td>
+                        <td>...</td>
+                    </tr>
+                </table>
+            </div>
+            <div id="cantidad-pagina" class="cantidad-pagina">1 - 10 de 30 filas
+                <span class="material-icons-outlined material-icons icono-ordenar">
+                    navigate_before
+                </span>
+                <span class="material-icons-outlined material-icons icono-ordenar">
+                    navigate_next
+                </span>
+
+            </div>
+            <div id="filtro-pagina" class="filtro-pagina">Filas por pagina 10 <span
+                    class="material-icons-outlined material-icons icono-ordenar">
+                    expand_more
+                </span></div>
+
+        </div>
+
+        <div id="contenedor-edicion" class="modal">
+
+
+            <div class="ventana-edicion ventana-edicion-usuarios">
+                <a href="#" style='text-decoration:none;' class="close-icon">
+                    <span class="material-icons-outlined material-icons icono-ordenar">
+                        close
+                    </span>
+                </a>
+                <h1 class="titulo-seccion">Adicionar Usuario</h1>
+                <div class="datos-principales-usuario">
+                    <Span class="titulo-1">Nombre<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="nombre" class="input campo-1">
+                    <Span class="titulo-2">Apellido<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="cargo" class="input campo-2">
+                    <Span class="titulo-3">Email<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="cargo" class="input campo-3">
+                    <Span class="titulo-4">Perfil<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="cargo" class="input campo-4">
+                    <Span class="titulo-5">Contraseña<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="cargo" class="input campo-5">
+                    <Span class="titulo-6">Repetir Contraseña<span class="campo-obl">*</span></Span><input type="text"
+                        name="" id="cargo" class="input campo-6">
+                </div>
+                <div class="datos-generales-usuario">
+                    <input type="button" value="Guardar Usuario" class="btn-principal btn-guardar">
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .ventana {
+            background-color: white;
+            width: 400px;
+            padding: 10px 20px;
+            margin: 20% 0;
+            position: relative;
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, .8);
+            position: fixed;
+            top: -250px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s;
+        }
+
+        #IrVentanaFlotante:target {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="opcion">
+        <a href="#IrVentanaFlotante">
+            desplegar
+        </a>
+    </div>
+
+    <div id="IrVentanaFlotante" class="modal">
+        <div class="ventana">
+            <a href="#" style='text-decoration:none;'>
+                X
+            </a>
+            <h2>Agregar Contacto</h2>
+            <p>Detalle de las opciones</p>
+        </div>
+    </div>
+
+</body>
+
+</html>
