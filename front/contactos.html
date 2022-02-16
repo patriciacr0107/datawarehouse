@@ -15,17 +15,14 @@
         <div id='menu'>
             <nav>
                 <div class="nav">
-                    <a href="#home" class="link-home">Data Warehouse</a>
+                    <a href="contactos.html" class="link-home">Data Warehouse</a>
                     <div class="menu">
                         <ul>
-                            <li><a href="#contactos" onclick="cambiarModo()" class="item-menu">Contactos</a></li>
-                            <li><a href="#companias" onclick="mostrarFavoritos()" id="fav-mnu-desk"
-                                    class="item-menu">Compañías</a>
+                            <li><a href="contactos.html" class="item-menu">Contactos</a></li>
+                            <li><a href="companias.html" class="item-menu">Compañías</a>
                             </li>
-                            <li><a href="#usuarios" onclick="mostrarSeccionMisGifos()" id="misgif-mnu"
-                                    class="item-menu">Usuarios</a></li>
-                            <li><a href="#ciudad" onclick="mostrarSeccionMisGifos()" id="misgif-mnu"
-                                    class="item-menu">Región / Ciudad</a></li>
+                            <li id='mnu-usuarios'><a href="usuarios.html" class="item-menu">Usuarios</a></li>
+                            <li><a href="regiones.html" class="item-menu">Región / Ciudad</a></li>
                         </ul>
                     </div>
                 </div>
@@ -36,7 +33,7 @@
             <h1 class="titulo-seccion">Contactos</h1>
             <div class="opciones">
                 <input type="button" value="Exportar contactos" class="btn-secundario">
-                <a href="#contenedor-edicion">
+                <a href="#contenedor-edicion" onclick=mostrarFormAgregar()>
                     <input type="button" value="Agregar contacto" class="btn-principal">
                 </a>
             </div>
@@ -75,7 +72,7 @@
             </div>
 
             <div id="datos contacto" class="contenedor-datos">
-                <table class="datos-contactos" cellpadding="2" cellspacing="5">
+                <table class="datos-contactos" cellpadding="2" cellspacing="5" id="tbl-contactos">
                     <tr>
                         <th></th>
                         <th>
@@ -109,9 +106,6 @@
                             </div>
                         </th>
                         <th>
-                            <div class="titulo">Canal preferido</div>
-                        </th>
-                        <th>
                             <div class="titulo">Interés
                                 <span class="material-icons-outlined material-icons icono-ordenar">
                                     import_export
@@ -128,7 +122,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>70%
                             <meter id="file" max="100" value="70" low="25" high="75" optimum="100"> 70%
                             </meter>
@@ -141,7 +134,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>90%
                             <meter id="file" max="100" value="90" low="25" high="75" optimum="100"> 90%
                             </meter>
@@ -154,7 +146,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>10%
                             <meter id="file" max="100" value="10" low="25" high="75" optimum="100"> 10%
                             </meter>
@@ -167,7 +158,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>10%
                             <meter id="file" max="100" value="10" low="25" high="75" optimum="100"> 10%
                             </meter>
@@ -180,7 +170,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>10%
                             <meter id="file" max="100" value="10" low="25" high="75" optimum="100"> 10%
                             </meter>
@@ -193,7 +182,6 @@
                         <td>Argentina</td>
                         <td>Ecom Experts</td>
                         <td>UX Designer</td>
-                        <td>Whatsapp</td>
                         <td>10%
                             <meter id="file" max="100" value="10" low="25" high="75" optimum="100"> 10%
                             </meter>
@@ -227,24 +215,28 @@
                         close
                     </span>
                 </a>
-                <h1 class="titulo-seccion">Adicionar Contacto</h1>
+                <h1 class="titulo-seccion" id="titulo-modal">Adicionar Contacto</h1>
                 <div class="datos-principales">
                     <Span class="titulo-1">Nombre<span class="campo-obl">*</span></Span><input type="text" name=""
                         id="nombre" class="input campo-1">
-                    <Span class="titulo-2">Apellido<span class="campo-obl">*</span></Span><input type="text" name=""
-                        id="cargo" class="input campo-2">
-                    <Span class="titulo-3">Cargo<span class="campo-obl">*</span></Span><input type="text" name=""
-                        id="cargo" class="input campo-3">
-                    <Span class="titulo-4">Email<span class="campo-obl">*</span></Span><input type="text" name=""
+                    <Span class="titulo-2">Apellidos<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="apellidos" class="input campo-2">
+                    <Span class="titulo-3">Email<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="email" class="input campo-3">
+                    <Span class="titulo-4">Cargo<span class="campo-obl">*</span></Span><input type="text" name=""
                         id="cargo" class="input campo-4">
-                    <Span class="titulo-5">Compañía<span class="campo-obl">*</span></Span><input type="text" name=""
-                        id="cargo" class="input campo-5">
+                    <Span class="titulo-5">Compañía<span class="campo-obl">*</span></Span>
+                    <select name="" id="compania-add" class="select campo-5">
+                        <option value="">compañia 1</option>
+                        <option value=""></option>
+                    </select>
+
                 </div>
                 <div class="datos-generales">
                     <Span class="titulo-1">Región</Span><select name="region" id="region" class="select campo-1">
                         <option value="SinRegion">Seleccione la region</option>
                     </select>
-                    <Span class="titulo-2">País</Span><select name="pais" id="pais" class="select campo-2">
+                    <Span class="titulo-2">País</Span><select name="pais" id="pais-add" class="select campo-2">
                         <option value="SinRegion">Seleccione el país</option>
                     </select>
                     <Span class="titulo-3">Ciudad</Span><select name="ciudad" id="ciudad" class="select campo-3">
@@ -253,37 +245,51 @@
                     <Span class="titulo-4">Dirección</Span><input type="text" name="direccion" id="direccion"
                         class="input campo-4">
                     <Span class="titulo-5">Interes</Span><select name="interes" id="interes" class="select campo-5">
-                        <option value="Todos">Seleccione le interés</option>
+                        <option value="0">0%</option>
+                        <option value="25">25%</option>
+                        <option value="50">50%</option>
+                        <option value="75">75%</option>
+                        <option value="100">100%</option>
                     </select>
-                    <Span class="titulo-6">Canal de contacto</Span><select name="canal" id="canal"
-                        class="select campo-6">
-                        <option value="SinCanal">Seleccione el canal</option>
-                    </select>
-                    <Span class="titulo-7">Cuenta de usuario</Span><input type="text" name="usuario" id="usuario"
-                        class="input campo-7">
-                    <Span class="titulo-8">Preferencia</Span><select name="preferencia" id="preferencia"
-                        class="select campo-8">
-                        <option value="SinPreferencia">Sin preferencia</option>
-                    </select>
-                    <div class="agregar-canal-btn btn-secundario">Agregar Canal</div>
-                    <div class="datos-canal">
-                        <table class="datos-contactos" cellpadding="2" cellspacing="5">
-                            <tr>
-                                <th>
-                                    Canal
+                    <div class="contenedor-canal">
+                        <Span class="titulo-6">Canal de contacto</Span>
+                        <select name="canal" id="canal" class="select campo-6">
+                            <option value="Telefono">Teléfono</option>
+                            <option value="Whatsapp">Whatsapp</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Twitter">Twitter</option>
+                            <option value="Linkedin">Linkedin</option>
+                        </select>
+                        <Span class="titulo-7">Cuenta de usuario</Span><input type="text" name="usuario" id="usuario"
+                            class="input campo-7">
+                        <Span class="titulo-8">Preferencia</Span>
+                        <select name="preferencia" id="preferencia" class="select campo-8">
+                            <option value="Sin Preferencia">Sin preferencia</option>
+                            <option value="Canal Favorito">Canal Favorito</option>
+                            <option value="No Molestar">No Molestar</option>
+                        </select>
+                        <div class="agregar-canal-btn btn-secundario" id="btn-canal">+Canal</div>
+                        <div class="datos-canal">
+                            <table class="datos-contactos" cellpadding="2" cellspacing="5" id="datos-canal-tbl">
+                                <tr>
+                                    <th>
+                                        Canal
 
-                                </th>
-                                <th>
-                                    Cuenta
+                                    </th>
+                                    <th>
+                                        Cuenta
 
-                                </th>
-                                <th>
-                                    Preferencia
-                                </th>
-                            </tr>
-                        </table>
+                                    </th>
+                                    <th>
+                                        Preferencia
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                    <input type="button" value="Guardar contacto" class="btn-principal btn-guardar">
+                    <input type="button" value="Guardar contacto" class="btn-principal btn-guardar"
+                        id="btn-guardar-contacto">
                 </div>
 
 
@@ -294,7 +300,8 @@
 
     </div>
 
-
+    <script src="js/menu.js"></script>
+    <script src="js/contactos.js"></script>
 </body>
 
 </html>

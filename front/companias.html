@@ -30,15 +30,15 @@
         </div>
 
         <div class="contenedor-contactos" id="contenedor-usuarios">
-            <h1 class="titulo-seccion">Usuarios</h1>
+            <h1 class="titulo-seccion">Compañías</h1>
             <div class="opciones">
                 <a href="#contenedor-edicion" onclick=mostrarFormAgregar()>
-                    <input type="button" value="Agregar usuario" class="btn-principal">
+                    <input type="button" value="Agregar Compañía" class="btn-principal">
                 </a>
             </div>
             <div class="contenedor-busqueda">
                 <div class="contenedor-busqueda-items">
-                    <input type="text" name="" id="txt-buscar" class="input" placeholder="Buscar por nombre">
+                    <input type="text" name="" id="txt-buscar" class="input" placeholder="Buscar compañía por nombre">
                     <div class="btn-buscar" id='btn-buscar'>
                         <span class="material-icons-outlined material-icons btn-buscar-icon">
                             search
@@ -49,7 +49,7 @@
             </div>
 
             <div id="datos-usuario" class="contenedor-datos">
-                <table class="datos-contactos" cellpadding="2" cellspacing="5" id="tbl-usuarios">
+                <table class="datos-contactos" cellpadding="2" cellspacing="5" id="tbl-companias">
                     <!--<tr>
                         <th>
                             <div class="titulo">
@@ -61,7 +61,7 @@
                         </th>
                         <th>
                             <div class="titulo">
-                                <span>Apellido</span>
+                                <span>Ciudad / País</span>
                                 <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
                                     import_export
                                 </span>
@@ -77,7 +77,15 @@
                         </th>
                         <th>
                             <div class="titulo">
-                                <span>Perfil</span>
+                                <span>Teléfono</span>
+                                <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
+                                    import_export
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="titulo">
+                                <span>Direccion</span>
                                 <span id="orden-contacto" class="material-icons-outlined material-icons icono-ordenar">
                                     import_export
                                 </span>
@@ -88,47 +96,47 @@
                         </th>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Globant</td>
+                        <td>Buenos Aires - Argentina</td>
+                        <td>hi@globant.com - +1 877 215 5230</td>
+                        <td>Globant North Park, Correa 2442, C.P.: C1429DRN</td>
                         <td>...</td>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Universidad de Medellin</td>
+                        <td>Medellin - Colombia</td>
+                        <td>contacto@udemedellin.edu.co - (604) 590 6999</td>
+                        <td>Carrera 87 N° 30 – 65</td>
                         <td>...</td>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Ecopetrol</td>
+                        <td>Bogotá - Colombia</td>
+                        <td>contacto@ecopetrol.com.co - +57 310 315 8600.</td>
+                        <td>Edificio Principal Cr. 13 No. 36 - 24</td>
                         <td>...</td>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Ecopetrol</td>
+                        <td>Bogotá - Colombia</td>
+                        <td>contacto@ecopetrol.com.co - +57 310 315 8600.</td>
+                        <td>Edificio Principal Cr. 13 No. 36 - 24</td>
                         <td>...</td>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Ecopetrol</td>
+                        <td>Bogotá - Colombia</td>
+                        <td>contacto@ecopetrol.com.co - +57 310 315 8600.</td>
+                        <td>Edificio Principal Cr. 13 No. 36 - 24</td>
                         <td>...</td>
                     </tr>
                     <tr>
-                        <td>Soledad</td>
-                        <td>Castro</td>
-                        <td>soledad@gmail.com</td>
-                        <td>Admin</td>
+                        <td>Ecopetrol</td>
+                        <td>Bogotá - Colombia</td>
+                        <td>contacto@ecopetrol.com.co - +57 310 315 8600.</td>
+                        <td>Edificio Principal Cr. 13 No. 36 - 24</td>
                         <td>...</td>
-                    </tr> -->
+                    </tr>-->
                 </table>
             </div>
             <div id="cantidad-pagina" class="cantidad-pagina">1 - 10 de 30 filas
@@ -159,27 +167,30 @@
                         close
                     </span>
                 </a>
-                <h1 class="titulo-seccion" id="titulo-modal">Adicionar Usuario</h1>
+                <h1 class="titulo-seccion" id="titulo-modal">Adicionar Compañía</h1>
                 <div class="datos-principales-usuario">
                     <Span class="titulo-1">Nombre<span class="campo-obl">*</span></Span><input type="text" name=""
                         id="nombre" class="input campo-1">
-                    <Span class="titulo-2">Apellido<span class="campo-obl">*</span></Span><input type="text" name=""
-                        id="apellidos" class="input campo-2">
+                    <Span class="titulo-2">Direccion<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="direccion" class="input campo-2">
                     <Span class="titulo-3">Email<span class="campo-obl">*</span></Span><input type="text" name=""
                         id="email" class="input campo-3">
-                    <Span class="titulo-4">Perfil<span class="campo-obl">*</span></Span>
-                    <select name="" id="perfil" class="select campo-4">
-                        <option value="user">Básico</option>
-                        <option value="admin">Admin</option>
+                    <Span class="titulo-4">Teléfono<span class="campo-obl">*</span></Span><input type="text" name=""
+                        id="telefono" class="input campo-4">
+                    <Span class="titulo-5">Pais<span class="campo-obl">*</span></Span>
+                    <select name="" id="pais" class="select campo-5">
+                        <option value=""></option>
+                        <option value=""></option>
                     </select>
-                    <Span class="titulo-5" id="titulo-pw">Contraseña<span class="campo-obl">*</span></Span><input
-                        type="password" name="" id="password" class="input campo-5">
-                    <Span class="titulo-6" id="titulo-pw2">Repetir Contraseña<span
-                            class="campo-obl">*</span></Span><input type="password" name="" id="password2"
-                        class="input campo-6">
+                    <Span class="titulo-6">Ciudad<span class="campo-obl">*</span></Span>
+                    <select name="" id="ciudad" class="select campo-6">
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
+
                 </div>
                 <div class="datos-generales-usuario">
-                    <input type="button" id="btn-guardar-usuario" value="Guardar Usuario"
+                    <input type="button" id="btn-guardar-compania" value="Guardar Compañía"
                         class="btn-principal btn-guardar">
                 </div>
 
@@ -192,7 +203,7 @@
     </div>
 
     <script src="js/menu.js"></script>
-    <script src="js/usuarios.js"></script>
+    <script src="js/companias.js"></script>
 </body>
 
 </html>

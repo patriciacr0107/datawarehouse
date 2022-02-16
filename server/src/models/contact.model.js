@@ -66,19 +66,8 @@ const contactSchema = new mongoose.Schema({
     }, */
   ],
   company: {
-    type: String,
-    required: [true, 'Company is required'],
-    trim: true,
-    lowercase: true,
-  },
-  region: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Region',
-    required: true,
-  },
-  country: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Country',
+    ref: 'Company',
     required: true,
   },
   city: {
@@ -90,7 +79,7 @@ const contactSchema = new mongoose.Schema({
 
 contactSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'city',
+    path: 'city company',
     select: '-__v',
   });
   next();

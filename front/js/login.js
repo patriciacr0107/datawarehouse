@@ -1,12 +1,23 @@
-//variables globales
+///////////////////variables globales
 
-//Referencias a HTML
+///////////////////Referencias a HTML
 const btnIngreso = document.getElementById('btn-ingreso');
 
-//
-async function ingresar(usuario, password) {
+
+///////////////////Funciones
+
+//inicializar aplicacion
+function inicializar() {
+    document.getElementById('usuario').value = 'admin@datawarehouse.com';
+    document.getElementById('password').value = 'ABC123456';
+}
+
+//inicio de sesion
+async function iniciarSesion(usuario, password) {
     let data = {};
-    let user;
+    let user = {};
+    let token;
+    let estado = 'error';
     data.email = usuario;
     data.password = password;
 
@@ -21,8 +32,14 @@ async function ingresar(usuario, password) {
         body: JSON.stringify(data)
     }).then(response => response.json())
         .then(response => {
-            user = response;
+            user.email = response.user.email;
+            user.perfil = response.user.role;
+            token = response.token;
+            estado = response.status;
             console.log('response', response);
+            console.log('user', user);
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('key', token);
             //almacenar datos en localstorage
             //redirigir a contactos
             window.location.href = "contactos.html";
@@ -32,17 +49,16 @@ async function ingresar(usuario, password) {
             console.error('Error:', error);
             alert('Usuario o contraseña incorrecto');
         });
-    //const user = await request.json();
 
 
-    console.log('user', user);
+    /*console.log('user', user);
     if (!user) {
         console.log('ingreso');
         return;
-    }
+    }*/
 }
 
-//eventos
+///////////////////eventos
 btnIngreso.addEventListener('click', e => {
     const usuario = document.getElementById('usuario');
     const password = document.getElementById('password');
@@ -56,6 +72,8 @@ btnIngreso.addEventListener('click', e => {
     //validar correo
     //registro
 
-    ingresar(usuario.value, password.value);
+    iniciarSesion(usuario.value, password.value);
 
 })
+
+inicializar();

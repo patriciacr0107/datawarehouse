@@ -17,13 +17,13 @@ const companySchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Address is required'],
+    required: [true, 'Email is required'],
     trim: true,
     lowercase: true,
   },
   phone: {
-    type: Number,
-    required: [true, 'Address is required'],
+    type: String,
+    required: [true, 'Phone is required'],
     trim: true,
     lowercase: true,
   },

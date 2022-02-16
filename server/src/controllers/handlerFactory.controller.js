@@ -28,8 +28,8 @@ exports.deleteOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    if (req.body.password || req.body.role || req.body.passwordConfirm) {
-      return next(new AppError(`Password or role  can't be modify`, 404));
+    if (req.body.password || req.body.passwordConfirm) {
+      return next(new AppError(`Password can't be modify`, 404));
     }
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
