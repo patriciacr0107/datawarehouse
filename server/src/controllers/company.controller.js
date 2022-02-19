@@ -9,6 +9,8 @@ exports.getCompanyById = factory.getOne(Company);
 // Obtiene todas las ciudades
 exports.getAllCompanies = factory.getAll(Company);
 
+exports.getFilter = factory.getFilter(Company);
+
 // Crea ciudad
 exports.createCompany = factory.createOne(Company);
 

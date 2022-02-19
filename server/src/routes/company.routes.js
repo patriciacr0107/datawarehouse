@@ -8,11 +8,14 @@ const {
   createCompany,
   updateCompany,
   deleteCompany,
+  getFilter,
 } = require('../controllers/company.controller');
 
 router.use(protect);
 
 router.route('').get(getAllCompanies).post(createCompany);
+
+router.route('/filter').get(getFilter);
 
 router
   .route('/:id')

@@ -8,11 +8,14 @@ const {
   createRegion,
   updateRegion,
   deleteRegion,
+  getFilter,
 } = require('../controllers/region.controller');
 
 router.use(protect);
 
 router.route('').get(getAllRegions).post(restrictTo('admin'), createRegion);
+
+router.route('/filter').get(getFilter);
 
 router
   .route('/:id')

@@ -18,6 +18,8 @@ exports.updateRegion = factory.updateOne(Region);
 // Borra una Region
 exports.deleteRegion = factory.deleteOne(Region);
 
+exports.getFilter = factory.getFilter(Region);
+
 /* exports.getRegionByDate = catchAsync(async (req, res, next) => {
   const { date } = req.params;
 

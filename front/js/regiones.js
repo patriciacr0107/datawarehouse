@@ -127,124 +127,6 @@ function mostrarDatos(ciudades) {
     }
 }
 
-/*
-async function cargarRegion2() {
-    let cities = [];
-
-
-    let regiones = await fetch(`http://localhost:3000/api/regions/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    })
-        .then((response) => response.json())
-        .then((json) => json);
-
-    //   console.log(regiones.doc[0]._id);
-
-    regiones.doc.forEach(async (element) => {
-        //   console.log(element._id);
-
-        let paises = await fetch(
-            `http://localhost:3000/api/countries/?region=${element._id}&sort=name`,
-            {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        )
-            .then((response) => response.json())
-            .then((json) => json);
-
-        let inicioR = 0;
-        if (paises.doc.length == 0) {
-            //mostrarRegion(element);
-            let ciudadesArr = {};
-            ciudadesArr.nombre = '';
-            ciudadesArr.id = '';
-            ciudadesArr.paisNombre = '';
-            ciudadesArr.paisId = '';
-            ciudadesArr.regionNombre = element.name;
-            ciudadesArr.regionId = element._id;
-
-            cities.push(ciudadesArr);
-        }
-
-
-
-        paises.doc.forEach(async (pais) => {
-            //   console.log(element._id);
-
-
-
-            let ciudades = await fetch(
-                `http://localhost:3000/api/cities/?country=${pais._id}&sort=name`,
-                {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            )
-                .then((response) => response.json())
-                // .then((json) => json);
-                .then((json) => json);
-            //   console.log('ciudades', ciudades);
-
-            if (ciudades.doc.length == 0) {
-                //if (inicioR == 0) {
-                //mostrarRegion(element);
-                //    inicioR = 1;
-                //}
-                //mostrarPais(pais);
-                let ciudadesArr = {};
-                ciudadesArr.nombre = '';
-                ciudadesArr.id = '';
-                ciudadesArr.paisNombre = pais.name;
-                ciudadesArr.paisId = pais._id;
-                ciudadesArr.regionNombre = element.name;
-                ciudadesArr.regionId = element._id;
-
-                cities.push(ciudadesArr);
-            }
-
-            ciudades.doc.forEach(ciudad => {
-                //if (inicioR == 0) {
-                //mostrarRegion(element);
-                //    inicioR = 1;
-                //}
-                //if (inicioP == 0) {
-                //mostrarPais(pais);
-                //    inicioP = 1;
-                //}
-                //mostrarCiudades(ciudad);
-                let ciudadesArr = {};
-                ciudadesArr.nombre = ciudad.name;
-                ciudadesArr.id = ciudad._id;
-                ciudadesArr.paisNombre = pais.name;
-                ciudadesArr.paisId = pais._id;
-                ciudadesArr.regionNombre = element.name;
-                ciudadesArr.regionId = element._id;
-
-                cities.push(ciudadesArr);
-            });
-
-        });
-    });
-
-
-    console.log(cities);
-    return cities;
-}*/
-
 async function cargarRegion(limite, region) {
     let url = region != '' ? `http://localhost:3000/api/regions/?name=${region}` :
         (limite == 'todas' ? `http://localhost:3000/api/regions/` :
@@ -263,8 +145,10 @@ async function cargarRegion(limite, region) {
     }).then(response => response.json())
         .then(response => {
             //console.log('retorna regiones', response.doc);
-            //console.log('Region guardada correctamente');
-            //mostrarNuevaRegion(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
+
             return response.doc;
         })
         .catch(error => {
@@ -288,6 +172,9 @@ async function cargarPaises(regiones) {
             }
         }).then(response => response.json())
             .then(response => {
+                if (response.status == 'error' || response.status == 'fail') {
+                    throw new Error(response.message);
+                }
                 let paisesXRegion = [];
 
                 if (response.doc.length == 0) {
@@ -374,6 +261,9 @@ async function cargarCiudades(paises) {
                 }
             }).then(response => response.json())
                 .then(response => {
+                    if (response.status == 'error' || response.status == 'fail') {
+                        throw new Error(response.message);
+                    }
                     let ciudadesXPais = [];
 
                     //console.log('ciudades ', response.doc);
@@ -457,6 +347,9 @@ async function guardarRegion(id) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Region guardada correctamente');
 
             filaRegion = document.getElementById(`fila-reg-${id}`)
@@ -466,7 +359,7 @@ async function guardarRegion(id) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando region');
+            alert('Error guardando region: ' + error.message);
         });
 
 }
@@ -486,6 +379,9 @@ async function guardarPais(id) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Pais guardado correctamente');
 
             filaRegion = document.getElementById(`fila-reg-${id}`)
@@ -495,7 +391,7 @@ async function guardarPais(id) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando pais');
+            alert('Error guardando pais: ' + error.message);
         });
 }
 
@@ -514,6 +410,9 @@ async function guardarCiudad(id) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Ciudad guardada correctamente');
 
             filaPais = document.getElementById(`fila-reg-${id}`)
@@ -523,7 +422,7 @@ async function guardarCiudad(id) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando pais');
+            alert('Error guardando ciudad: ' + error.message);
         });
 }
 
@@ -566,6 +465,9 @@ async function eliminarDatosRegion(idRegion) {
                 }
             }).then(response => response.json())
                 .then(response => {
+                    if (response.status == 'error' || response.status == 'fail') {
+                        throw new Error(response.message);
+                    }
                     return response.doc;
                 })
                 .catch(error => {
@@ -584,12 +486,16 @@ async function eliminarDatosRegion(idRegion) {
                     }
                 }).then(response => response.json())
                     .then(response => {
+                        if (response.status == 'error' || response.status == 'fail') {
+                            throw new Error(response.message);
+                        }
                         console.log(`Ciudades de ${pais.name} borradas correctamente`);
 
                     })
                     .catch(error => {
 
                         console.error('Error borrando region:', error);
+                        alert('Error borrando region: ' + error.message);
                     });
                 await borrarPais(pais._id, false);
             }
@@ -611,6 +517,9 @@ async function eliminarRegion(id) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Region borrada correctamente');
             limpiarTblRegiones()
             cargarDatos('todas', '');
@@ -618,7 +527,7 @@ async function eliminarRegion(id) {
             //filaRegion.remove();
         })
         .catch(error => {
-
+            alert('Error eliminando region: ' + error.message);
             console.error('Error:', error);
         });
 }
@@ -641,12 +550,15 @@ async function eliminarCiudadesxPais(idPais) {
                 }
             }).then(response => response.json())
                 .then(response => {
+                    if (response.status == 'error' || response.status == 'fail') {
+                        throw new Error(response.message);
+                    }
                     console.log(`Ciudades de ${filaPais.innerHTML} borradas correctamente`);
                     borrarPais(idPais, true);
 
                 })
                 .catch(error => {
-
+                    alert('Error borrando ciudades: ' + error.message);
                     console.error('Error:', error);
                 });
         } else {
@@ -666,6 +578,9 @@ async function borrarPais(id, carga) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Pais borrado correctamente');
 
             if (carga) {
@@ -677,7 +592,7 @@ async function borrarPais(id, carga) {
             //filaPais.remove();
         })
         .catch(error => {
-
+            alert('Error borrando país: ' + error.message);
             console.error('Error:', error);
         });
 
@@ -699,6 +614,9 @@ async function borrarCiudad(id) {
                 }
             }).then(response => response.json())
                 .then(response => {
+                    if (response.status == 'error' || response.status == 'fail') {
+                        throw new Error(response.message);
+                    }
                     console.log('Ciudad borrada correctamente');
 
                     filaCiudad = document.getElementById(`reg-${id}`);
@@ -707,7 +625,7 @@ async function borrarCiudad(id) {
                 .catch(error => {
 
                     console.error('Error:', error);
-                    alert('Error borrando ciudad');
+                    alert('Error borrando ciudad: ' + error.message);
                 });
         } else {
             alert(`No se puede eliminar la ciudad ${filaCiudad.innerHTML}, tiene contactos o compañias asociadas`);
@@ -832,13 +750,16 @@ async function guardarPaisNuevo(region) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Pais guardado correctamente');
             mostrarNuevoPais(response.doc);
         })
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando pais');
+            alert('Error guardando país: ' + error.message);
         });
 }
 
@@ -860,13 +781,16 @@ async function guardarCiudadNueva(pais) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Ciudad guardada correctamente');
             mostrarNuevaCiudad(response.doc);
         })
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando ciudad');
+            alert('Error guardando ciudad: ' + error.message);
         });
 }
 
@@ -954,13 +878,16 @@ async function crearRegion(region) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Region guardada correctamente');
             mostrarNuevaRegion(response.doc);
         })
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando region');
+            alert('Error guardando region: ' + error.message);
         });
 
 }
@@ -980,7 +907,9 @@ async function validarRegion(idRegion) {
         }
     }).then(response => response.json())
         .then(response => {
-
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             return response.doc;
 
         })
@@ -1020,7 +949,9 @@ async function validarPais(idPais) {
         }
     }).then(response => response.json())
         .then(response => {
-
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             return response.doc;
 
         })
@@ -1061,6 +992,9 @@ async function validarCiudad(idCiudad) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Compañias asociadas a ciudad ', response.doc);
 
 
@@ -1085,6 +1019,9 @@ async function validarCiudad(idCiudad) {
             }
         }).then(response => response.json())
             .then(response => {
+                if (response.status == 'error' || response.status == 'fail') {
+                    throw new Error(response.message);
+                }
                 console.log('Contactos asociadas a ciudad ', response.doc);
                 return response.doc.length > 0 ? false : true;
 

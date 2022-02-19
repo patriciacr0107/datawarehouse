@@ -32,6 +32,9 @@ async function iniciarSesion(usuario, password) {
         body: JSON.stringify(data)
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             user.email = response.user.email;
             user.perfil = response.user.role;
             token = response.token;
@@ -47,7 +50,7 @@ async function iniciarSesion(usuario, password) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Usuario o contraseña incorrecto');
+            alert('Error iniciando sesion: ' + error.message);
         });
 
 

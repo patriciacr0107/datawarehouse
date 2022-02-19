@@ -22,9 +22,8 @@ function crearCampoTitulo(campo) {
   let divCampo = document.createElement('div');
   divCampo.setAttribute('class', 'titulo orden-desc');
   divCampo.setAttribute('id', `btn-ord-${campo}`);
-  divCampo.innerHTML = `<span>${
-    campo.charAt(0).toUpperCase() + campo.slice(1)
-  }</span>
+  divCampo.innerHTML = `<span>${campo.charAt(0).toUpperCase() + campo.slice(1)
+    }</span>
     <span  class="material-icons-outlined material-icons icono-ordenar">
         import_export
     </span>`;
@@ -106,11 +105,15 @@ async function eliminarUsuario(id, nombre) {
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
+        if (response.status == 'error' || response.status == 'fail') {
+          throw new Error(response.message);
+        }
         //limpiarTblUsuarios();
         borrarUsuarioTbl(id);
       })
       .catch((error) => {
         console.error('Error eliminando usuario:', error);
+        alert('Error eliminando usuario: ' + error.message);
       });
   }
 }
@@ -129,7 +132,9 @@ async function buscarUsuario(id) {
     .then((response) => response.json())
     .then((response) => {
       console.log(response);
-
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
       document.getElementById('nombre').value =
         response.doc.name.charAt(0).toUpperCase() + response.doc.name.slice(1);
       document.getElementById('apellidos').value =
@@ -148,7 +153,7 @@ async function buscarUsuario(id) {
       btnGuardarUsuario.value = 'Guardar cambios';
     })
     .catch((error) => {
-      console.error('Error eliminando usuario:', error);
+      console.error('Error buscando usuario:', error);
     });
 }
 
@@ -242,6 +247,9 @@ async function cargarUsuarios(pagina, cmpOrden, tipoOrden, limite) {
     .then((response) => response.json())
     .then((response) => {
       console.log(response.doc);
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
       usuarios = response.doc;
       limpiarTblUsuarios();
       usuarios.forEach((usuario) => {
@@ -250,7 +258,7 @@ async function cargarUsuarios(pagina, cmpOrden, tipoOrden, limite) {
       });
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error cargando usuarios:', error);
     });
 
   totalPaginas = await calcularTotalPagina();
@@ -271,9 +279,14 @@ async function cargarTotalUsuarios() {
     },
   })
     .then((response) => response.json())
-    .then((response) => response.doc)
+    .then((response) => {
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
+      return response.doc
+    })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error calculando total:', error);
     });
 
   return usuarios;
@@ -293,6 +306,9 @@ async function cargarUsuariosFiltro(valor) {
     .then((response) => response.json())
     .then((response) => {
       console.log(response.doc);
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
       usuarios = response.doc;
       limpiarTblUsuarios();
       usuarios.forEach((usuario) => {
@@ -301,7 +317,7 @@ async function cargarUsuariosFiltro(valor) {
       });
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Error consultando usuario:', error);
     });
 
   // totalPaginas = await calcularTotalPagina();
@@ -359,6 +375,9 @@ async function guardarUsuario(usuario) {
   })
     .then((response) => response.json())
     .then((response) => {
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
       console.log(response.user);
       console.log('Usuario guardado correctamente');
       alert('Usuario guardado correctamente');
@@ -369,7 +388,7 @@ async function guardarUsuario(usuario) {
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Error guardando usuario');
+      alert('Error guardando usuario: ' + error.message);
     });
 }
 
@@ -385,6 +404,9 @@ async function guardarCambiosUsuario(usuario) {
   })
     .then((response) => response.json())
     .then((response) => {
+      if (response.status == 'error' || response.status == 'fail') {
+        throw new Error(response.message);
+      }
       console.log(response.user);
       console.log('Cambios guardados correctamente');
       alert('Cambios guardados correctamente');
@@ -395,7 +417,7 @@ async function guardarCambiosUsuario(usuario) {
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Error guardando cambios');
+      alert('Error guardando cambios: ' + error.message);
     });
 }
 
@@ -488,6 +510,7 @@ btnBuscar.addEventListener('click', (e) => {
 
   if (txtBuscarValor == '') {
     alert('Por favor ingrese el nombre a buscar');
+    cargarUsuarios(1, ordenamiento, 'ASC', '10');
   } else {
     cargarUsuariosFiltro(txtBuscarValor);
   }
@@ -498,6 +521,7 @@ txtBuscar.addEventListener('keyup', (e) => {
   if (keycode == 13) {
     if (txtBuscar.value == '') {
       alert('Por favor ingrese el nombre a buscar');
+      cargarUsuarios(1, ordenamiento, 'ASC', '10');
     } else {
       cargarUsuariosFiltro(txtBuscar.value);
     }

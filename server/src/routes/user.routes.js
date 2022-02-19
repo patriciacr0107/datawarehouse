@@ -16,6 +16,7 @@ const {
   deleteUser,
   updateUser,
   getUserByDoc,
+  getFilter,
   // getMe,
 } = require('../controllers/user.controller');
 router.route('/sign-in').post(signin);
@@ -24,6 +25,7 @@ router.use(protect);
 router.route('/sign-up').post(restrictTo('admin'), signup);
 
 router.route('/').get(getAllUsers);
+router.route('/filter').get(getFilter);
 
 router
   .route('/:id')
@@ -31,6 +33,6 @@ router
   .delete(restrictTo('admin'), deleteUser)
   .patch(updateUser);
 
-// router.route('/document/:id').get( getUserByDoc);
+router.route('/document/:id').get(restrictTo('user'), getUserByDoc);
 
 module.exports = router;
