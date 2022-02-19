@@ -452,11 +452,7 @@ async function guardarCambiosUsuario(usuario) {
 } */
 
 async function cambiarPagina(valor) {
-  /*   console.log({
-      valor: valor,
-      filas: filasPg.value,
-      suma: (desdePagina += valor),
-    }); */
+
 
   totalPaginas = await calcularTotalPagina();
 

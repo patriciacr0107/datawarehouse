@@ -4,6 +4,11 @@ let idContactoEdicion = null;
 let canales = [];
 let idCanal = 0;
 let selContactos = [];
+let desdePagina = 1;
+let paginaActual = 1;
+let totalPaginas = 0;
+let contactosTotal = [];
+let ordenamiento = 'name';
 
 ///////////////////Referencias a HTML
 const tblContactos = document.getElementById('tbl-contactos');
@@ -18,6 +23,7 @@ const btnBuscar = document.getElementById('btn-buscar');
 const btnMostrarFiltros = document.getElementById('btn-mostrar-filtros');
 const btnExportar = document.getElementById('btn-exportar');
 const btnEliminar = document.getElementById('btn-eliminar');
+const cantidadPagina = document.getElementById('cantidad-pagina');
 
 ///////////////////Funciones
 
@@ -42,14 +48,16 @@ function agregarEventoClick(campo, campoNombre) {
     elemento.addEventListener('click', e => {
         console.log(`ordenar por ${campo}`);
         //console.log(elemento.classList);
+        ordenamiento = campoNombre;
         if (elemento.classList.contains("orden-desc")) {
             console.log('ingresa a ordenar descendientemente');
             limpiarTblContactos();
-            cargarContactos(campoNombre, 'DESC', filasPg.value);
+            cargarContactos(ordenamiento, 'DESC', filasPg.value, desdePagina, '');
+
         } else {
             console.log('ingresa a ordenar ascendentemente');
             limpiarTblContactos();
-            cargarContactos(campoNombre, 'ASC', filasPg.value);
+            cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
         }
 
         elemento.classList.toggle('orden-desc');
@@ -281,9 +289,50 @@ async function buscarContacto(id) {
 
 }
 
+// Obtiene los contactos sin filtrar
+async function cargarTotalContactos() {
+    //   let usuarios = [];
+
+    let usuarios = await fetch(`http://localhost:3000/api/contacts/`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
+            return response.doc
+        })
+        .catch((error) => {
+            console.error('Error calculando total:', error);
+        });
+
+    return usuarios;
+}
+
+async function calcularTotalPagina() {
+    contactosTotal = await cargarTotalContactos();
+
+    if (contactosTotal.length < filasPg.value) {
+        totalPaginas = 1;
+    } else {
+        totalPaginas =
+            Math.trunc(contactosTotal.length / filasPg.value) +
+            (contactosTotal.length % filasPg.value > 0 ? 1 : 0);
+    }
+
+    return totalPaginas;
+}
+
 //obtiene todos los usuarios de la base de datos
-async function cargarContactos(cmpOrden, tipoOrden, limite) {
+async function cargarContactos(cmpOrden, tipoOrden, limite, desde, filtro) {
     let contactos = [];
+    let url;
 
     if (tipoOrden == 'DESC') {
         tipoOrden = '-';
@@ -291,7 +340,13 @@ async function cargarContactos(cmpOrden, tipoOrden, limite) {
         tipoOrden = '';
     }
 
-    await fetch(`http://localhost:3000/api/contacts/?limit=${limite}&sort=${tipoOrden}${cmpOrden}`, {
+
+    url = filtro != '' ? `http://localhost:3000/api/contacts/?${filtro}&limit=${limite}&sort=${tipoOrden}${cmpOrden}` :
+        `http://localhost:3000/api/contacts/?page=${desde}&limit=${limite}&sort=${tipoOrden}${cmpOrden}`;
+
+    console.log(url);
+
+    await fetch(url, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -315,6 +370,14 @@ async function cargarContactos(cmpOrden, tipoOrden, limite) {
             console.error('Error obteniendo contactos:', error);
 
         });
+    if (filtro == '') {
+
+        totalPaginas = await calcularTotalPagina();
+        cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total contactos ${contactosTotal.length})`;
+    } else {
+        console.log('entro');
+        cantidadPagina.innerHTML = '';
+    }
 
 }
 
@@ -623,7 +686,7 @@ function guardarContacto(contacto) {
             console.log('Contacto guardado correctamente');
             alert('Contacto guardado correctamente');
             limpiarTblContactos();
-            cargarContactos('name', 'ASC', filasPg.value);
+            cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
 
         })
         .catch(error => {
@@ -651,7 +714,7 @@ function guardarCambiosContacto(contacto) {
             console.log('Cambios guardados correctamente');
             alert('Cambios guardados correctamente');
             limpiarTblContactos();
-            cargarContactos('name', 'ASC', filasPg.value);
+            cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
 
         })
         .catch(error => {
@@ -876,6 +939,26 @@ async function exportarContactos() {
     }
 }
 
+async function cambiarPagina(valor) {
+    totalPaginas = await calcularTotalPagina();
+
+    console.log('totalPaginas+', totalPaginas, 'filasPg.value', filasPg.value);
+
+    desdePagina += valor;
+    paginaActual += valor;
+
+    if (desdePagina <= 0) {
+        desdePagina = 1;
+    } else if (desdePagina > totalPaginas) {
+        desdePagina -= valor;
+    }
+
+    console.log('desdePagina', desdePagina);
+
+
+    cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
+}
+
 ///////////////////eventos
 
 regionSelect.addEventListener('change', e => {
@@ -941,11 +1024,12 @@ btnGuardarContacto.addEventListener('click', e => {
 
 filasPg.addEventListener('change', e => {
     limpiarTblContactos();
-    cargarContactos('name', 'ASC', filasPg.value);
+    desdePagina = 1;
+    cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
 });
 
 btnBuscar.addEventListener('click', e => {
-    let filtros;
+    let filtros = '';
     const nombreBusq = document.getElementById('nombre-busq').value;
     const cargoBusq = document.getElementById('cargo-busq').value;
     const ciudadBusq = document.getElementById('pais-busq').value;
@@ -960,27 +1044,31 @@ btnBuscar.addEventListener('click', e => {
 
     if (cargoBusq != '') {
 
-        filtros += `&position=${cargoBusq}`;
+        filtros += filtros == '' ? `position=${cargoBusq}` : `&position=${cargoBusq}`;
     }
 
     if (ciudadBusq != 'Todos') {
 
-        filtros += `&city=${ciudadBusq}`;
+        filtros += filtros == '' ? `city=${ciudadBusq}` : `&city=${ciudadBusq}`;
+
     }
 
     if (companiaBusq != 'Todas') {
-        filtros += `&company=${companiaBusq}`;
+        filtros += filtros == '' ? `company=${companiaBusq}` : `&company=${companiaBusq}`;
     }
 
     if (interesBusq != 'Todos') {
 
-        filtros += `&interest=${interesBusq}`;
+        filtros += filtros == '' ? `interest=${interesBusq}` : `&interest=${interesBusq}`;
 
     }
-
-    cargarContactos(filtros, 'ASC', filasPg.value);
+    console.log('filtros', filtros);
+    //cargarContactos(filtros, 'ASC', filasPg.value);
+    desdePagina = 1;
+    cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, filtros);
 
     filtrosBusqueda.style.display = 'none';
+    cantidadPagina.innerHTML = '';
 });
 
 btnMostrarFiltros.addEventListener('click', e => {
@@ -1021,5 +1109,5 @@ btnEliminar.addEventListener('click', e => {
 
 
 crearEncabezado();
-cargarContactos('name', 'ASC', filasPg.value);
+cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, '');
 ocultarOpciones();
