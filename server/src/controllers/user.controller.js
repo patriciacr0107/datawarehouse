@@ -50,8 +50,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-// Crea usuario
-// exports.createUser = factory.createOne(User);
+// Busqueda con filtros
+exports.getFilter = factory.getFilter(User);
 
 // Obtiene usuario por id
 exports.getUser = factory.getOne(User);
@@ -85,8 +85,3 @@ exports.getUserByDoc = catchAsync(async (req, res, next) => {
     user,
   });
 });
-
-/* exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
-}; */

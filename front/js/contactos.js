@@ -187,7 +187,9 @@ async function buscarContacto(id) {
     }).then(response => response.json())
         .then(response => {
             console.log(response);
-
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             document.getElementById('titulo-modal').innerHTML = 'Editar Contacto';
             document.getElementById('nombre-add').value = formatoMayusculaInicial(response.doc.names);
             document.getElementById('apellidos-add').value = formatoMayusculaInicial(response.doc.surnames);;
@@ -298,6 +300,9 @@ async function cargarContactos(cmpOrden, tipoOrden, limite) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             contactos = response.doc;
             limpiarTblContactos();
             contactos.forEach(contacto => {
@@ -333,6 +338,9 @@ async function cargarCompanias(selectCmp) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             //reiniciarSelect('compania-add');
             reiniciarSelect(selectCmp);
             cmpSelect = document.getElementById(selectCmp);
@@ -375,6 +383,9 @@ async function cargarCiudades(paisId) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('ciudad-add');
             cmpSelect = document.getElementById('ciudad-add');
             response.doc.forEach(ciudad => {
@@ -408,6 +419,9 @@ async function cargarPaises(region) {
     }).then(response => response.json())
         .then(response => {
             //console.log(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('pais-add');
             cmpSelect = document.getElementById('pais-add');
             response.doc.forEach(pais => {
@@ -453,6 +467,9 @@ async function cargarRegiones() {
     }).then(response => response.json())
         .then(response => {
             //console.log(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('region');
             cmpSelect = document.getElementById('region');
             response.doc.forEach(region => {
@@ -600,6 +617,9 @@ function guardarContacto(contacto) {
         body: JSON.stringify(contacto)
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Contacto guardado correctamente');
             alert('Contacto guardado correctamente');
             limpiarTblContactos();
@@ -609,7 +629,7 @@ function guardarContacto(contacto) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando contacto: ', error);
+            alert('Error guardando contacto: ' + error.message);
         });
 }
 
@@ -625,6 +645,9 @@ function guardarCambiosContacto(contacto) {
         body: JSON.stringify(contacto)
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Cambios guardados correctamente');
             alert('Cambios guardados correctamente');
             limpiarTblContactos();
@@ -634,7 +657,7 @@ function guardarCambiosContacto(contacto) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando cambios');
+            alert('Error guardando cambios: ' + error.message);
         });
 }
 
@@ -659,6 +682,9 @@ async function eliminarContacto(id, nombre) {
         }).then(response => response.json())
             .then(response => {
                 console.log(response);
+                if (response.status == 'error' || response.status == 'fail') {
+                    throw new Error(response.message);
+                }
                 borrarContactoTbl(id);
 
                 let i = selContactos.indexOf(id);
@@ -676,7 +702,7 @@ async function eliminarContacto(id, nombre) {
                 ocultarOpciones();
             })
             .catch(error => {
-
+                alert('Error eliminando contacto: ' + error.message);
                 console.error('Error eliminando contacto:', error);
 
             });
@@ -697,6 +723,9 @@ async function eliminarContactos() {
         }).then(response => response.json())
             .then(response => {
                 console.log(response);
+                if (response.status == 'error' || response.status == 'fail') {
+                    throw new Error(response.message);
+                }
                 borrarContactoTbl(contacto);
 
                 let i = selContactos.indexOf(contacto);
@@ -714,7 +743,7 @@ async function eliminarContactos() {
                 ocultarOpciones();
             })
             .catch(error => {
-
+                alert('Error eliminando contactos: ' + error.message);
                 console.error('Error eliminando contacto:', error);
 
             });
@@ -732,6 +761,9 @@ async function cargarCiudadesFiltro() {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('pais-busq');
             cmpSelect = document.getElementById('pais-busq');
             var option = document.createElement("option");
@@ -776,6 +808,10 @@ async function obtenerDatosExportar() {
             }
         }).then(response => response.json())
             .then(response => {
+                if (response.status == 'error' || response.status == 'fail') {
+                    throw new Error(response.message);
+                }
+
                 let contactoFila = '<tr>';
 
                 //console.log('ciudades ', response.doc);

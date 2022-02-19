@@ -89,22 +89,24 @@ exports.createOne = (Model) =>
     });
   });
 
-/* exports.updatePhoto = (Model) =>
+exports.getFilter = (Model) =>
   catchAsync(async (req, res, next) => {
-    const filteredBody = filterObj(req.file, 'photo');
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const sort = req.query?.sort?.split(',')?.join(' ');
+    const skip = (page - 1) * limit;
+    const busqueda = req.query.name;
+    const regex = new RegExp(busqueda, 'i');
+    const query = { name: regex };
 
-    // Update document
-    const updatedPet = await Model.findByIdAndUpdate(
-      req.params.id,
-      { photo: req.file.filename },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    console.log({ busqueda, query });
+
+    const doc = await Model.find(query).skip(skip).limit(limit).sort(sort);
 
     res.status(200).json({
       status: 'success',
-      updatedPet,
+      requestedAt: req.requestTime,
+      results: doc.length,
+      doc,
     });
-  }); */
+  });

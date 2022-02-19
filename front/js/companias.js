@@ -29,6 +29,10 @@ async function buscarUbicacion(idCiudad) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
+
             return response.doc;
         })
         .catch(error => {
@@ -46,6 +50,10 @@ async function buscarUbicacion(idCiudad) {
         }
     }).then(response => response.json())
         .then(response => {
+
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             return response.doc;
         })
         .catch(error => {
@@ -127,6 +135,9 @@ async function cargarCompanias(limite, tipoOrden, campoOrden, desde) {
     }).then(response => response.json())
         .then(response => {
             //console.log(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             companias = response.doc;
             limpiarTblCompanias();
             companias.forEach(compania => {
@@ -136,7 +147,7 @@ async function cargarCompanias(limite, tipoOrden, campoOrden, desde) {
         })
         .catch(error => {
 
-            console.error('Error:', error);
+            console.error('Error cargando compañias:', error);
 
         });
 
@@ -176,6 +187,9 @@ async function cargarCiudades(paisId) {
     }).then(response => response.json())
         .then(response => {
             //console.log(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('ciudad');
             cmpSelect = document.getElementById('ciudad');
             response.doc.forEach(ciudad => {
@@ -210,6 +224,9 @@ async function cargaPaises() {
     }).then(response => response.json())
         .then(response => {
             //console.log(response.doc);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             reiniciarSelect('pais');
             cmpSelect = document.getElementById('pais');
             response.doc.forEach(pais => {
@@ -290,8 +307,6 @@ async function guardarCompania(compania) {
             limpiarTblCompanias();
             cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
 
-            /*opacity: 0;
-    pointer-events: none;*/
         })
         .catch(error => {
 
@@ -323,11 +338,14 @@ async function eliminarCompania(id, nombre) {
                 }
             }).then(response => response.json())
                 .then(response => {
+                    if (response.status == 'error' || response.status == 'fail') {
+                        throw new Error(response.message);
+                    }
                     borrarCompaniaTbl(id);
                     console.log('Compañía borrada correctamente');
                 })
                 .catch(error => {
-
+                    alert('Error eliminando compañía: ' + error.message);
                     console.error('Error eliminando compañía:', error);
 
                 });
@@ -351,6 +369,9 @@ async function guardarCambiosCompania(compania) {
         body: JSON.stringify(compania)
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Compañía guardada correctamente');
             alert('Compañía guardada correctamente');
             limpiarTblCompanias();
@@ -361,7 +382,7 @@ async function guardarCambiosCompania(compania) {
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando compañia');
+            alert('Error guardando cambios: ' + error.message);
         });
 }
 
@@ -378,6 +399,9 @@ async function buscarCompanias(txtBuscar) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             companias = response.doc;
             limpiarTblCompanias();
             companias.forEach(compania => {
@@ -467,7 +491,9 @@ async function buscarCompania(id) {
     }).then(response => response.json())
         .then(response => {
             //console.log(response);
-
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             document.getElementById('nombre').value = formatoMayusculaInicial(response.doc.name);
             document.getElementById('direccion').value = formatoMayusculaInicial(response.doc.address);
             document.getElementById('email').value = response.doc.email;
@@ -508,6 +534,9 @@ async function validarContactos(idCompania) {
         }
     }).then(response => response.json())
         .then(response => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Contactos asociadas a compañía ', response.doc);
             return response.doc.length > 0 ? false : true;
 
@@ -535,7 +564,12 @@ async function cargarTotalCompanias() {
         },
     })
         .then((response) => response.json())
-        .then((response) => response.doc)
+        .then((response) => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
+            return response.doc;
+        })
         .catch((error) => {
             console.error('Error:', error);
         });
