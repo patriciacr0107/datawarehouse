@@ -1,6 +1,11 @@
 ///////////////////variables globales
 let token = localStorage.getItem("key");
 let idCompaniaEdicion = '';
+let desdePagina = 1;
+let paginaActual = 1;
+let totalPaginas = 0;
+let companiasTotal = [];
+let ordenamiento = 'name';
 
 ///////////////////Referencias a HTML
 tblCompanias = document.getElementById('tbl-companias');
@@ -9,7 +14,7 @@ selectPais = document.getElementById('pais');
 btnBuscar = document.getElementById('btn-buscar');
 filasPg = document.getElementById('filas-pg');
 txtBuscar = document.getElementById('txt-buscar');
-
+cantidadPagina = document.getElementById('cantidad-pagina');
 //////////////////funciones
 
 async function buscarUbicacion(idCiudad) {
@@ -103,7 +108,7 @@ async function mostrarCompania(compania) {
 }
 
 //Cargar los datos de compañias al ingresar
-async function cargarCompanias(limite, tipoOrden, campoOrden) {
+async function cargarCompanias(limite, tipoOrden, campoOrden, desde) {
     let companias = [];
 
     if (tipoOrden == 'DESC') {
@@ -112,7 +117,7 @@ async function cargarCompanias(limite, tipoOrden, campoOrden) {
         tipoOrden = '';
     }
 
-    fetch(`http://localhost:3000/api/companies/?limit=${limite}&sort=${tipoOrden}${campoOrden}`, {
+    await fetch(`http://localhost:3000/api/companies/?page=${desde}&limit=${limite}&sort=${tipoOrden}${campoOrden}`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -135,6 +140,9 @@ async function cargarCompanias(limite, tipoOrden, campoOrden) {
 
         });
 
+    totalPaginas = await calcularTotalPagina();
+
+    cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total compañías ${companiasTotal.length})`;
 }
 
 //borra la informacion de la tabla en pantalla
@@ -262,6 +270,7 @@ function validarCompania(compania) {
 //guarda una nueva compañia
 async function guardarCompania(compania) {
     console.log('compania', compania);
+
     await fetch('http://localhost:3000/api/companies/', {
         method: 'POST',
         headers: {
@@ -272,18 +281,24 @@ async function guardarCompania(compania) {
         body: JSON.stringify(compania)
     }).then(response => response.json())
         .then(response => {
+            //console.log('sin error: ', response);
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
             console.log('Compañía guardada correctamente');
             alert('Compañía guardada correctamente');
             limpiarTblCompanias();
-            cargarCompanias(filasPg.value, 'ASC', 'name');
+            cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
+
             /*opacity: 0;
     pointer-events: none;*/
         })
         .catch(error => {
 
             console.error('Error:', error);
-            alert('Error guardando compañía');
+            alert('Error guardando compañía: ' + error.message);
         });
+
 }
 
 //borra un registro de la tabla
@@ -339,7 +354,7 @@ async function guardarCambiosCompania(compania) {
             console.log('Compañía guardada correctamente');
             alert('Compañía guardada correctamente');
             limpiarTblCompanias();
-            cargarCompanias(filasPg.value, 'ASC', 'name');
+            cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
             /*opacity: 0;
     pointer-events: none;*/
         })
@@ -375,7 +390,7 @@ async function buscarCompanias(txtBuscar) {
             console.error('Error buscando compañias:', error);
 
         });
-
+    cantidadPagina.innerHTML = ``;
 }
 
 function crearCampoTitulo(campo) {
@@ -400,14 +415,17 @@ function agregarEventoClick(campo, campoNombre) {
     elemento.addEventListener('click', e => {
         console.log(`ordenar por ${campo}`);
         console.log(elemento.classList);
+        ordenamiento = campoNombre;
         if (elemento.classList.contains("orden-desc")) {
             console.log('ingresa a ordenar descendientemente');
             limpiarTblCompanias();
-            cargarCompanias(filasPg.value, 'DESC', campoNombre);
+            cargarCompanias(filasPg.value, 'DESC', ordenamiento, desdePagina);
         } else {
             console.log('ingresa a ordenar ascendentemente');
             limpiarTblCompanias();
-            cargarCompanias(filasPg.value, 'ASC', campoNombre);
+
+            cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
+
         }
 
         elemento.classList.toggle('orden-desc');
@@ -504,6 +522,61 @@ async function validarContactos(idCompania) {
 }
 
 
+// Obtiene las compañias sin filtrar
+async function cargarTotalCompanias() {
+    //   let usuarios = [];
+
+    let companias = await fetch(`http://localhost:3000/api/companies/`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => response.doc)
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+    return companias;
+}
+
+async function calcularTotalPagina() {
+    companiasTotal = await cargarTotalCompanias();
+
+    if (companiasTotal.length < filasPg.value) {
+        totalPaginas = 1;
+    } else {
+        totalPaginas = Math.trunc(companiasTotal.length / filasPg.value) + ((companiasTotal.length % filasPg.value) > 0 ? 1 : 0);
+    }
+
+    return totalPaginas;
+
+}
+
+async function cambiarPagina(valor) {
+
+    totalPaginas = await calcularTotalPagina();
+
+    console.log('totalPaginas+', totalPaginas, 'filasPg.value', filasPg.value);
+
+
+    desdePagina += valor;
+    paginaActual += valor;
+
+    if (desdePagina <= 0) {
+        desdePagina = 1;
+    } else if (desdePagina > totalPaginas) {
+        desdePagina -= valor;
+    }
+
+    console.log('desdePagina', desdePagina);
+
+    cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
+}
+
 /////////////////////eventos
 
 selectPais.addEventListener('change', e => {
@@ -523,7 +596,9 @@ btnGuardarCompania.addEventListener('click', e => {
     if (btnGuardarCompania.value == 'Guardar Compañía') {
 
         if (validarCompania(compania)) {
-            guardarCompania(compania);
+            guardarCompania(compania).catch(e => {
+                console.log('error al guardar: ', e);
+            });
         }
     } else {
         if (validarCompania(compania)) {
@@ -558,8 +633,8 @@ txtBuscar.addEventListener('keyup', e => {
 
 filasPg.addEventListener('change', e => {
     limpiarTblCompanias();
-    cargarCompanias(filasPg.value, 'ASC', 'name');
+    cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);
 })
 
 crearEncabezado();
-cargarCompanias(10, 'ASC', 'name');
+cargarCompanias(filasPg.value, 'ASC', ordenamiento, desdePagina);

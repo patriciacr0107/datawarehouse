@@ -40,16 +40,6 @@ function agregarEventoClick(campo, campoNombre) {
     elemento.addEventListener('click', (e) => {
         console.log(`ordenar por ${campo}`);
         console.log(elemento.classList);
-
-
-
-
-
-
-
-
-
-
         ordenamiento = campoNombre;
 
         if (elemento.classList.contains('orden-desc')) {
@@ -88,10 +78,6 @@ function crearEncabezado() {
 
 function limpiarTblUsuarios() {
     regUsuarios = document.getElementsByClassName('reg-usuario');
-
-
-
-
 
     for (i = regUsuarios.length - 1; i >= 0; i--) {
         tblUsuarios.removeChild(regUsuarios[i]);
@@ -149,36 +135,6 @@ async function eliminarUsuario(id, nombre) {
 
 async function buscarUsuario(id) {
     console.log('id ', id);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     await fetch(`http://localhost:3000/api/users/${id}`, {
         method: 'GET',
@@ -440,26 +396,6 @@ async function guardarCambiosUsuario(usuario) {
 async function buscarUsuarios(txtBuscar) {
     let usuarios = [];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     console.log('txtBuscar', txtBuscar);
 
     await fetch(`http://localhost:3000/api/users/?name=${txtBuscar}&limit=10`, {
@@ -494,8 +430,8 @@ async function cambiarPagina(valor) {
       suma: (desdePagina += valor),
     }); */
 
-    usuariosTotal = await cargarTotalUsuarios();
-    totalPaginas = Math.round(usuariosTotal.length / filasPg.value);
+
+    totalPaginas = await calcularTotalPagina();
 
     console.log('totalPaginas+', totalPaginas, 'filasPg.value', filasPg.value);
 

@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const AppError = require('./utils/appError');
 const dotenv = require('dotenv');
+const globalErrorHandler = require('./controllers/errorController');
 /* const {
   userRouter,
   regionRouter,
@@ -45,7 +46,15 @@ app.options('*', cors());
 // app.options('/api/v1/tours/:id', cors());
 
 // Bodyparser para obtener el body del método
-app.use(express.json({}));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// app.use(cookieParser());
+
+// Data sanitization against NoSQL query injection
+// app.use(mongoSanitize());
+
+// Data sanitization against XSS
+// app.use(xss());
 app.use(express.static(`${__dirname}/public`));
 app.use(compression());
 app.use((req, res, next) => {
@@ -76,5 +85,7 @@ app.all('*', (req, res, next) => {
 
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;
