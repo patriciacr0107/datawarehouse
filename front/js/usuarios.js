@@ -1,21 +1,29 @@
 ///////////////////variables globales
-let token = localStorage.getItem("key");
+let token = localStorage.getItem('key');
 let idUsuarioEdicion = '';
+let desdePagina = 1;
+let paginaActual = 1;
+let totalPaginas = 0;
+let usuariosTotal = [];
+let ordenamiento = 'name';
 
 ///////////////////Referencias a HTML
 tblUsuarios = document.getElementById('tbl-usuarios');
 btnGuardarUsuario = document.getElementById('btn-guardar-usuario');
 btnBuscar = document.getElementById('btn-buscar');
 filasPg = document.getElementById('filas-pg');
+cantidadPagina = document.getElementById('cantidad-pagina');
+txtBuscar = document.getElementById('txt-buscar')
 
 ///////////////////Funciones
 
 function crearCampoTitulo(campo) {
-    let tituloCampo = document.createElement("th");
-    let divCampo = document.createElement("div");
-    divCampo.setAttribute("class", 'titulo orden-desc');
-    divCampo.setAttribute("id", `btn-ord-${campo}`);
-    divCampo.innerHTML = `<span>${campo.charAt(0).toUpperCase() + campo.slice(1)}</span>
+    let tituloCampo = document.createElement('th');
+    let divCampo = document.createElement('div');
+    divCampo.setAttribute('class', 'titulo orden-desc');
+    divCampo.setAttribute('id', `btn-ord-${campo}`);
+    divCampo.innerHTML = `<span>${campo.charAt(0).toUpperCase() + campo.slice(1)
+        }</span>
     <span  class="material-icons-outlined material-icons icono-ordenar">
         import_export
     </span>`;
@@ -29,17 +37,29 @@ function crearCampoTitulo(campo) {
 function agregarEventoClick(campo, campoNombre) {
     const elemento = document.getElementById(`btn-ord-${campo}`);
 
-    elemento.addEventListener('click', e => {
+    elemento.addEventListener('click', (e) => {
         console.log(`ordenar por ${campo}`);
         console.log(elemento.classList);
-        if (elemento.classList.contains("orden-desc")) {
+
+
+
+
+
+
+
+
+
+
+        ordenamiento = campoNombre;
+
+        if (elemento.classList.contains('orden-desc')) {
             console.log('ingresa a ordenar descendientemente');
             limpiarTblUsuarios();
-            cargarUsuarios(campoNombre, 'DESC', filasPg.value);
+            cargarUsuarios(1, ordenamiento, 'DESC', filasPg.value);
         } else {
             console.log('ingresa a ordenar ascendentemente');
             limpiarTblUsuarios();
-            cargarUsuarios(campoNombre, 'ASC', filasPg.value);
+            cargarUsuarios(1, ordenamiento, 'ASC', filasPg.value);
         }
 
         elemento.classList.toggle('orden-desc');
@@ -47,7 +67,7 @@ function agregarEventoClick(campo, campoNombre) {
 }
 
 function crearEncabezado() {
-    let fila = document.createElement("tr");
+    let fila = document.createElement('tr');
 
     fila.appendChild(crearCampoTitulo('nombre'));
     fila.appendChild(crearCampoTitulo('apellidos'));
@@ -69,10 +89,13 @@ function crearEncabezado() {
 function limpiarTblUsuarios() {
     regUsuarios = document.getElementsByClassName('reg-usuario');
 
+
+
+
+
     for (i = regUsuarios.length - 1; i >= 0; i--) {
         tblUsuarios.removeChild(regUsuarios[i]);
     }
-
 }
 
 function borrarUsuarioTbl(id) {
@@ -86,24 +109,40 @@ async function eliminarUsuario(id, nombre) {
 
         console.log('se elimina usuario');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         await fetch(`http://localhost:3000/api/users/${id}`, {
             method: 'DELETE',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => response.json())
-            .then(response => {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
                 console.log(response);
                 //limpiarTblUsuarios();
                 borrarUsuarioTbl(id);
-
             })
-            .catch(error => {
-
+            .catch((error) => {
                 console.error('Error eliminando usuario:', error);
-
             });
     }
 }
@@ -111,19 +150,53 @@ async function eliminarUsuario(id, nombre) {
 async function buscarUsuario(id) {
     console.log('id ', id);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     await fetch(`http://localhost:3000/api/users/${id}`, {
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
-    }).then(response => response.json())
-        .then(response => {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
             console.log(response);
 
-            document.getElementById('nombre').value = response.doc.name.charAt(0).toUpperCase() + response.doc.name.slice(1);
-            document.getElementById('apellidos').value = response.doc.lastname.charAt(0).toUpperCase() + response.doc.lastname.slice(1);
+            document.getElementById('nombre').value =
+                response.doc.name.charAt(0).toUpperCase() + response.doc.name.slice(1);
+            document.getElementById('apellidos').value =
+                response.doc.lastname.charAt(0).toUpperCase() +
+                response.doc.lastname.slice(1);
             document.getElementById('email').value = response.doc.email;
             document.getElementById('perfil').value = response.doc.role;
             //document.getElementById('password').disabled = true;
@@ -135,14 +208,10 @@ async function buscarUsuario(id) {
             document.getElementById('titulo-modal').innerHTML = 'Editar Usuario';
             idUsuarioEdicion = response.doc._id;
             btnGuardarUsuario.value = 'Guardar cambios';
-
         })
-        .catch(error => {
-
+        .catch((error) => {
             console.error('Error eliminando usuario:', error);
-
         });
-
 }
 
 function mostrarFormAgregar() {
@@ -152,6 +221,8 @@ function mostrarFormAgregar() {
     document.getElementById('nombre').value = '';
     document.getElementById('apellidos').value = '';
     document.getElementById('email').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('password2').value = '';
     document.getElementById('perfil').value = 'user';
     document.getElementById('titulo-pw').style.display = 'inline-block';
     document.getElementById('titulo-pw2').style.display = 'inline-block';
@@ -161,27 +232,29 @@ function mostrarFormAgregar() {
 
 function mostrarUsuarios(usuario) {
 
-    let fila = document.createElement("tr");
-    fila.setAttribute("class", 'reg-usuario');
-    fila.setAttribute("id", `reg-${usuario._id}`);
+    let fila = document.createElement('tr');
+    fila.setAttribute('class', 'reg-usuario');
+    fila.setAttribute('id', `reg-${usuario._id}`);
     //elem.setAttribute("id", `slider_${imgGif.id}`);
-    let cmpNombre = document.createElement("td");
-    cmpNombre.innerHTML = usuario.name.charAt(0).toUpperCase() + usuario.name.slice(1);
+    let cmpNombre = document.createElement('td');
+    cmpNombre.innerHTML =
+        usuario.name.charAt(0).toUpperCase() + usuario.name.slice(1);
     fila.appendChild(cmpNombre);
 
-    let cmpApellidos = document.createElement("td");
-    cmpApellidos.innerHTML = usuario.lastname.charAt(0).toUpperCase() + usuario.lastname.slice(1);
+    let cmpApellidos = document.createElement('td');
+    cmpApellidos.innerHTML =
+        usuario.lastname.charAt(0).toUpperCase() + usuario.lastname.slice(1);
     fila.appendChild(cmpApellidos);
 
-    let cmpEmail = document.createElement("td");
+    let cmpEmail = document.createElement('td');
     cmpEmail.innerHTML = usuario.email;
     fila.appendChild(cmpEmail);
 
-    let cmpPerfil = document.createElement("td");
+    let cmpPerfil = document.createElement('td');
     cmpPerfil.innerHTML = usuario.role == 'admin' ? 'Admin' : 'Básico';
     fila.appendChild(cmpPerfil);
 
-    let cmpOpciones = document.createElement("td");
+    let cmpOpciones = document.createElement('td');
     cmpOpciones.innerHTML = `<a href="#contenedor-edicion" onclick="buscarUsuario('${usuario._id}')">
     <span class="material-icons-outlined material-icons icono-accion">
     edit
@@ -193,9 +266,22 @@ function mostrarUsuarios(usuario) {
     tblUsuarios.appendChild(fila);
 }
 
+async function calcularTotalPagina() {
+    usuariosTotal = await cargarTotalUsuarios();
+
+    if (usuariosTotal.length < filasPg.value) {
+        totalPaginas = 1;
+    } else {
+        totalPaginas = Math.trunc(usuariosTotal.length / filasPg.value) + ((usuariosTotal.length % filasPg.value) > 0 ? 1 : 0);
+    }
+
+    return totalPaginas;
+
+}
+
 //obtiene todos los usuarios de la base de datos
-async function cargarUsuarios(cmpOrden, tipoOrden, limite) {
-    let usuarios = [];
+async function cargarUsuarios(pagina, cmpOrden, tipoOrden, limite) {
+    //   let usuarios = [];
 
     if (tipoOrden == 'DESC') {
         tipoOrden = '-';
@@ -203,30 +289,57 @@ async function cargarUsuarios(cmpOrden, tipoOrden, limite) {
         tipoOrden = '';
     }
 
-    await fetch(`http://localhost:3000/api/users/?limit=${limite}&sort=${tipoOrden}${cmpOrden}`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+    await fetch(
+        // `http://localhost:3000/api/users/?limit=${limite}&sort=${tipoOrden}${cmpOrden}`,
+        `http://localhost:3000/api/users/?page=${pagina}&limit=${limite}&sort=${tipoOrden}${cmpOrden}`,
+        {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
         }
-    }).then(response => response.json())
-        .then(response => {
+    )
+        .then((response) => response.json())
+        .then((response) => {
             console.log(response.doc);
             usuarios = response.doc;
             limpiarTblUsuarios();
-            usuarios.forEach(usuario => {
+            usuarios.forEach((usuario) => {
                 //console.log('usuario', usuario.name);
                 mostrarUsuarios(usuario);
             });
-
         })
-        .catch(error => {
-
+        .catch((error) => {
             console.error('Error:', error);
-
         });
 
+
+    totalPaginas = await calcularTotalPagina();
+
+    cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total usuarios ${usuariosTotal.length})`;
+}
+
+// Obtiene los usuarios sin filtrar
+async function cargarTotalUsuarios() {
+    //   let usuarios = [];
+
+    let usuarios = await fetch(`http://localhost:3000/api/users/`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => response.doc)
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
+    return usuarios;
 }
 
 function validarUsuario(usuario) {
@@ -274,22 +387,23 @@ async function guardarUsuario(usuario) {
     await fetch('http://localhost:3000/api/users/sign-up', {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(usuario)
-    }).then(response => response.json())
-        .then(response => {
+        body: JSON.stringify(usuario),
+    })
+        .then((response) => response.json())
+        .then((response) => {
             console.log(response.user);
             console.log('Usuario guardado correctamente');
             alert('Usuario guardado correctamente');
             limpiarTblUsuarios();
-            cargarUsuarios('name', 'ASC', filasPg.value);
+            cargarUsuarios(1, 'name', 'ASC', filasPg.value);
             /*opacity: 0;
-    pointer-events: none;*/
+          pointer-events: none;*/
         })
-        .catch(error => {
+        .catch((error) => {
 
             console.error('Error:', error);
             alert('Error guardando usuario');
@@ -300,22 +414,23 @@ async function guardarCambiosUsuario(usuario) {
     await fetch(`http://localhost:3000/api/users/${idUsuarioEdicion}`, {
         method: 'PATCH',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(usuario)
-    }).then(response => response.json())
-        .then(response => {
+        body: JSON.stringify(usuario),
+    })
+        .then((response) => response.json())
+        .then((response) => {
             console.log(response.user);
             console.log('Cambios guardados correctamente');
             alert('Cambios guardados correctamente');
             limpiarTblUsuarios();
-            cargarUsuarios('name', 'ASC', filasPg.value);
+            cargarUsuarios(1, 'name', 'ASC', filasPg.value);
             /*opacity: 0;
-    pointer-events: none;*/
+          pointer-events: none;*/
         })
-        .catch(error => {
+        .catch((error) => {
 
             console.error('Error:', error);
             alert('Error guardando cambios');
@@ -325,35 +440,89 @@ async function guardarCambiosUsuario(usuario) {
 async function buscarUsuarios(txtBuscar) {
     let usuarios = [];
 
-    await fetch(`http://localhost:3000/api/users/?name=${txtBuscar}&limit=10&sort=names`, {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    console.log('txtBuscar', txtBuscar);
+
+    await fetch(`http://localhost:3000/api/users/?name=${txtBuscar}&limit=10`, {
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
-    }).then(response => response.json())
-        .then(response => {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
             console.log(response.doc);
             usuarios = response.doc;
             limpiarTblUsuarios();
-            usuarios.forEach(usuario => {
+            usuarios.forEach((usuario) => {
                 console.log('usurio', usuario.name);
                 mostrarUsuarios(usuario);
             });
-
         })
-        .catch(error => {
-
+        .catch((error) => {
             console.error('Error:', error);
-
         });
 
+    cantidadPagina.innerHTML = ``;
+}
+
+async function cambiarPagina(valor) {
+    /*   console.log({
+      valor: valor,
+      filas: filasPg.value,
+      suma: (desdePagina += valor),
+    }); */
+
+    usuariosTotal = await cargarTotalUsuarios();
+    totalPaginas = Math.round(usuariosTotal.length / filasPg.value);
+
+    console.log('totalPaginas+', totalPaginas, 'filasPg.value', filasPg.value);
+
+
+    desdePagina += valor;
+    paginaActual += valor;
+
+    if (desdePagina <= 0) {
+        desdePagina = 1;
+    } else if (desdePagina > totalPaginas) {
+        desdePagina -= valor;
+    }
+
+    console.log('desdePagina', desdePagina);
+
+    /*   if (paginaActual < 0) {
+      paginaActual = 1;
+    } else if (paginaActual > totalPaginas) {
+      paginaActual -= valor;
+    } */
+
+    cargarUsuarios(desdePagina, ordenamiento, 'ASC', filasPg.value);
 }
 
 ///////////////////eventos
 
-btnGuardarUsuario.addEventListener('click', e => {
+btnGuardarUsuario.addEventListener('click', (e) => {
     let usuario = {};
 
     usuario.name = document.getElementById('nombre').value;
@@ -370,28 +539,45 @@ btnGuardarUsuario.addEventListener('click', e => {
     } else {
         if (validarUsuarioEditado(usuario)) {
             guardarCambiosUsuario(usuario);
+
         }
-    }
-
-})
-
-btnBuscar.addEventListener('click', e => {
-    txtBuscar = document.getElementById('txt-buscar').value;
-
-    if (txtBuscar == '') {
-        alert('Por favor ingrese el nombre a buscar');
-    }
-    else {
-        buscarUsuarios(txtBuscar);
     }
 });
 
-filasPg.addEventListener('change', e => {
+btnBuscar.addEventListener('click', (e) => {
+    txtBuscarValor = document.getElementById('txt-buscar').value;
+
+    if (txtBuscarValor == '') {
+        alert('Por favor ingrese el nombre a buscar');
+    } else {
+        buscarUsuarios(txtBuscarValor);
+    }
+});
+
+txtBuscar.addEventListener('keyup', e => {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+
+        if (txtBuscar.value == '') {
+            alert('Por favor ingrese el nombre a buscar');
+        }
+        else {
+            buscarUsuarios(txtBuscar.value);
+        }
+    }
+});
+
+filasPg.addEventListener('change', (e) => {
     limpiarTblUsuarios();
-    cargarUsuarios('name', 'ASC', filasPg.value);
-})
+    desdePagina = 1;
+    cargarUsuarios(1, 'name', 'ASC', filasPg.value);
+
+
+});
+
+
 
 /////////////////////////////////////////////////////
 
 crearEncabezado();
-cargarUsuarios('name', 'ASC', '10');
+cargarUsuarios(1, ordenamiento, 'ASC', '10');

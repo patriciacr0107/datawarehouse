@@ -7,6 +7,7 @@ tblRegiones = document.getElementById('tbl-regiones');
 addRegionBtn = document.getElementById('add-region-btn');
 filasPg = document.getElementById('filas-pg');
 btnBuscar = document.getElementById('btn-buscar');
+txtBuscar = document.getElementById('txt-buscar');
 
 ///////////////////Funciones
 
@@ -24,7 +25,7 @@ function mostrarRegion(region) {
         <span class="material-icons-outlined material-icons btn-tbl" onclick="editarRegion('${region.regionId}','${region.regionName}')">
             edit
         </span>
-        <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarRegion('${region.regionId}')">
+        <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarDatosRegion('${region.regionId}')">
             delete
         </span>
         <div class="btn-tbl-add" onclick="crearPais('${region.regionId}')">+País</div>
@@ -43,7 +44,7 @@ function mostrarRegion(region) {
 }
 
 function mostrarPais(pais) {
-    console.log('muestra datos de pais: ', pais.name);
+    //console.log('muestra datos de pais: ', pais.name);
 
     tblRegiones.innerHTML += `<tr class="fila-otr" id="reg-${pais.paisId}">
     <td></td>
@@ -53,7 +54,7 @@ function mostrarPais(pais) {
             <div class="opciones-fila"><span class="material-icons-outlined material-icons btn-tbl" onclick="editarPais('${pais.paisId}', '${pais.paisName}')">
                     edit
                 </span>
-                <span class="material-icons-outlined material-icons btn-tbl" onclick="borrarPais('${pais.paisId}')">
+                <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarCiudadesxPais('${pais.paisId}')">
                     delete
                 </span>
                 <div class="btn-tbl-add" onclick="crearCiudad('${pais.paisId}')">+Ciudad</div>
@@ -74,7 +75,7 @@ function mostrarPais(pais) {
 
 //muestra las ciudades de un pais
 function mostrarCiudades(ciudad) {
-    console.log('muestra datos de una ciudad: ', ciudad.name);
+    //console.log('muestra datos de una ciudad: ', ciudad.name);
 
     tblRegiones.innerHTML += `<tr class="fila-otr" id="reg-${ciudad.ciudadId}">
     <td class="region-tbl"></td>
@@ -261,7 +262,7 @@ async function cargarRegion(limite, region) {
         }
     }).then(response => response.json())
         .then(response => {
-            console.log('retorna regiones', response.doc);
+            //console.log('retorna regiones', response.doc);
             //console.log('Region guardada correctamente');
             //mostrarNuevaRegion(response.doc);
             return response.doc;
@@ -318,7 +319,7 @@ async function cargarPaises(regiones) {
         paisesArr = paisesArr.concat(paises);
     }
 
-    console.log('retorna paises ', paisesArr);
+    //console.log('retorna paises ', paisesArr);
     return paisesArr;
 
 
@@ -332,8 +333,12 @@ async function cargarCiudades(paises) {
     let region = paises[0].regionId;
     mostrarRegion(paises[0]);
     for (let pais of paises) {
+        //console.log('region ', pais.regionName);
+        //console.log('region: ', region);
+        //console.log('pais.regionId: ', pais.regionId);
         if (region != pais.regionId) {
             mostrarRegion(pais);
+            region = pais.regionId;
         }
 
         if (pais.paisId != '') {
@@ -422,7 +427,7 @@ async function cargarCiudades(paises) {
 
     }
 
-    console.log('retorna ciudades ', ciudadesArr);
+    //console.log('retorna ciudades ', ciudadesArr);
     return ciudadesArr;
 
 
@@ -430,9 +435,9 @@ async function cargarCiudades(paises) {
 
 async function cargarDatos(limite, region) {
     let regiones = await cargarRegion(limite, region);
-    console.table(regiones);
+    //console.table(regiones);
     let paises = await cargarPaises(regiones);
-    console.table(paises);
+    //console.table(paises);
     let ciudades = await cargarCiudades(paises);
     console.table(ciudades);
 }
@@ -545,60 +550,137 @@ function editarCiudad(id, nombre) {
 
 }
 
-async function eliminarRegion(id) {
-    filaRegion = document.getElementById(`fila-reg-${id}`);
-    let des = confirm(`Desea borrar la region ${filaRegion.innerHTML}?`);
+async function eliminarDatosRegion(idRegion) {
+    filaRegion = document.getElementById(`fila-reg-${idRegion}`);
 
-    if (des) {
-        fetch(`http://localhost:3000/api/regions/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+    if (confirm(`Desea borrar la region ${filaRegion.innerHTML}?`)) {
+
+        if (await validarRegion(idRegion)) {
+
+            let paises = await fetch(`http://localhost:3000/api/countries/?region=${idRegion}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => response.json())
+                .then(response => {
+                    return response.doc;
+                })
+                .catch(error => {
+
+                    console.error('Error obteniendo paises:', error);
+
+                });
+
+            for (let pais of paises) {
+                await fetch(`http://localhost:3000/api/cities/delete-cities/country/${pais._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(`Ciudades de ${pais.name} borradas correctamente`);
+
+                    })
+                    .catch(error => {
+
+                        console.error('Error borrando region:', error);
+                    });
+                await borrarPais(pais._id, false);
             }
-        }).then(response => response.json())
-            .then(response => {
-                console.log('Region borrada correctamente');
-                limpiarTblRegiones()
-                cargarDatos('todas', '');
-                //filaRegion = document.getElementById(`reg-${id}`);
-                //filaRegion.remove();
-            })
-            .catch(error => {
-
-                console.error('Error:', error);
-                alert('Error guardando region');
-            });
+            eliminarRegion(idRegion);
+        } else {
+            alert('No se puede eliminar la region, hay contactos o compañias en uno de sus paises');
+        }
     }
 }
 
-async function borrarPais(id) {
-    filaPais = document.getElementById(`fila-reg-${id}`);
+async function eliminarRegion(id) {
+
+    fetch(`http://localhost:3000/api/regions/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+            console.log('Region borrada correctamente');
+            limpiarTblRegiones()
+            cargarDatos('todas', '');
+            //filaRegion = document.getElementById(`reg-${id}`);
+            //filaRegion.remove();
+        })
+        .catch(error => {
+
+            console.error('Error:', error);
+        });
+}
+
+
+async function eliminarCiudadesxPais(idPais) {
+    filaPais = document.getElementById(`fila-reg-${idPais}`);
     let des = confirm(`Desea borrar el país ${filaPais.innerHTML}?`);
 
     if (des) {
-        fetch(`http://localhost:3000/api/countries/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => response.json())
-            .then(response => {
-                console.log('Pais borrado correctamente');
+
+        resultado = await validarPais(idPais);
+        if (resultado) {
+            fetch(`http://localhost:3000/api/cities/delete-cities/country/${idPais}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => response.json())
+                .then(response => {
+                    console.log(`Ciudades de ${filaPais.innerHTML} borradas correctamente`);
+                    borrarPais(idPais, true);
+
+                })
+                .catch(error => {
+
+                    console.error('Error:', error);
+                });
+        } else {
+            alert('No se puede eliminar el pais, tiene compañías o contactos asociados');
+        }
+    }
+}
+
+async function borrarPais(id, carga) {
+
+    await fetch(`http://localhost:3000/api/countries/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+            console.log('Pais borrado correctamente');
+
+            if (carga) {
                 limpiarTblRegiones()
                 cargarDatos('todas', '');
-                //filaPais = document.getElementById(`reg-${id}`);
-                //filaPais.remove();
-            })
-            .catch(error => {
+            }
 
-                console.error('Error:', error);
-                alert('Error guardando region');
-            });
-    }
+            //filaPais = document.getElementById(`reg-${id}`);
+            //filaPais.remove();
+        })
+        .catch(error => {
+
+            console.error('Error:', error);
+        });
+
 }
 
 async function borrarCiudad(id) {
@@ -606,25 +688,30 @@ async function borrarCiudad(id) {
     let des = confirm(`Desea borrar la ciudad ${filaCiudad.innerHTML}?`);
 
     if (des) {
-        fetch(`http://localhost:3000/api/cities/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => response.json())
-            .then(response => {
-                console.log('Ciudad borrada correctamente');
 
-                filaCiudad = document.getElementById(`reg-${id}`);
-                filaCiudad.remove();
-            })
-            .catch(error => {
+        if (await validarCiudad(id)) {
+            fetch(`http://localhost:3000/api/cities/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => response.json())
+                .then(response => {
+                    console.log('Ciudad borrada correctamente');
 
-                console.error('Error:', error);
-                alert('Error borrando ciudad');
-            });
+                    filaCiudad = document.getElementById(`reg-${id}`);
+                    filaCiudad.remove();
+                })
+                .catch(error => {
+
+                    console.error('Error:', error);
+                    alert('Error borrando ciudad');
+                });
+        } else {
+            alert(`No se puede eliminar la ciudad ${filaCiudad.innerHTML}, tiene contactos o compañias asociadas`);
+        }
     }
 }
 
@@ -642,7 +729,7 @@ function mostrarNuevaRegion(datosRegion) {
         <span class="material-icons-outlined material-icons btn-tbl" onclick="editarRegion('${datosRegion._id}','${datosRegion.name}')">
             edit
         </span>
-        <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarRegion('${datosRegion._id}')">
+        <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarDatosRegion('${datosRegion._id}')">
             delete
         </span>
         <div class="btn-tbl-add" onclick="crearPais('${datosRegion._id}')">+País</div>
@@ -674,7 +761,7 @@ function mostrarNuevoPais(pais) {
             <div class="opciones-fila"><span class="material-icons-outlined material-icons btn-tbl" onclick="editarPais('${pais.paisId}', '${pais.paisName}')">
                     edit
                 </span>
-                <span class="material-icons-outlined material-icons btn-tbl" onclick="borrarPais('${pais._id}')">
+                <span class="material-icons-outlined material-icons btn-tbl" onclick="eliminarCiudadesxPais('${pais._id}')">
                     delete
                 </span>
                 <div class="btn-tbl-add" onclick="crearCiudad('${pais._id}')">+Ciudad</div>
@@ -882,6 +969,138 @@ function guardarRegionNueva() {
     crearRegion(document.getElementById('txt-nueva-region').value);
 }
 
+async function validarRegion(idRegion) {
+    let terminar;
+    let paises = await fetch(`http://localhost:3000/api/countries/?region=${idRegion}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+
+            return response.doc;
+
+        })
+        .catch(error => {
+
+            console.error('Error validando ciudades de pais:', error);
+            //alert('Error cargando paises');
+        });
+
+    if (paises.length == 0) {
+        console.log('la region no tiene paises asociados');
+        return true;
+    }
+
+    terminar = true;
+
+    for (let j of paises) {
+        if (terminar) {
+            res = await validarPais(j._id);
+            if (!res) {
+                console.log('Region con contactos o compañias asociadas: ', j.name);
+                terminar = false;
+            }
+        }
+    }
+    return terminar;
+}
+
+async function validarPais(idPais) {
+    let terminar;
+    let ciudades = await fetch(`http://localhost:3000/api/cities/?country=${idPais}&sort=name`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+
+            return response.doc;
+
+        })
+        .catch(error => {
+
+            console.error('Error validando ciudades de pais:', error);
+            //alert('Error cargando paises');
+        });
+
+    if (ciudades.length == 0) {
+        console.log('El pais no tiene ciudades asociadas');
+        return true;
+    }
+
+    terminar = true;
+
+    for (let j of ciudades) {
+        if (terminar) {
+            res = await validarCiudad(j._id);
+            if (!res) {
+                console.log('Ciudad del pais con contactos o compañias asociadas: ', j.name);
+                terminar = false;
+            }
+        }
+    }
+    return terminar;
+}
+
+
+async function validarCiudad(idCiudad) {
+
+    let respuesta = await fetch(`http://localhost:3000/api/companies/?city=${idCiudad}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+            console.log('Compañias asociadas a ciudad ', response.doc);
+
+
+            return response.doc.length > 0 ? false : true;
+
+        })
+        .catch(error => {
+
+            console.error('Error validando companias de ciudad:', error);
+            //alert('Error cargando paises');
+        });
+
+    if (!respuesta) {
+        return respuesta;
+    } else {
+        respuesta = await fetch(`http://localhost:3000/api/contacts/?city=${idCiudad}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log('Contactos asociadas a ciudad ', response.doc);
+                return response.doc.length > 0 ? false : true;
+
+            })
+            .catch(error => {
+
+                console.error('Error validando contactos de ciudad:', error);
+                //alert('Error cargando paises');
+            });
+
+        return respuesta;
+    }
+
+
+}
+
 ///////////////////////////eventos
 
 addRegionBtn.addEventListener('click', e => {
@@ -918,17 +1137,31 @@ filasPg.addEventListener('change', e => {
 });
 
 btnBuscar.addEventListener('click', e => {
-    txtBuscar = document.getElementById('txt-buscar').value;
+    txtBuscarValor = document.getElementById('txt-buscar').value;
 
-    if (txtBuscar == '') {
+    if (txtBuscarValor == '') {
         alert('Por favor ingrese la region a buscar');
     }
     else {
         //buscarRegion(txtBuscar);
         limpiarTblRegiones();
-        cargarDatos('', txtBuscar);
+        cargarDatos('', txtBuscarValor);
     }
 })
+
+txtBuscar.addEventListener('keyup', e => {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+
+        if (txtBuscar.value == '') {
+            alert('Por favor ingrese la region a buscar');
+        }
+        else {
+            limpiarTblRegiones();
+            cargarDatos('', txtBuscar.value);
+        }
+    }
+});
 
 //cargarRegion().then(ciudades => console.log('a', ciudades));
 cargarDatos(2, '');

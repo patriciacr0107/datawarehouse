@@ -8,6 +8,7 @@ btnGuardarCompania = document.getElementById('btn-guardar-compania');
 selectPais = document.getElementById('pais');
 btnBuscar = document.getElementById('btn-buscar');
 filasPg = document.getElementById('filas-pg');
+txtBuscar = document.getElementById('txt-buscar');
 
 //////////////////funciones
 
@@ -294,25 +295,30 @@ function borrarCompaniaTbl(id) {
 
 //borra una compañia de la base de datos
 async function eliminarCompania(id, nombre) {
-    if (confirm(`Desea elminar la compañía ${formatoMayusculaInicial(nombre)} del sistema?`)) {
+    if (confirm(`Desea elminar del sistema la compañía ${formatoMayusculaInicial(nombre)}?`)) {
 
-        await fetch(`http://localhost:3000/api/companies/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => response.json())
-            .then(response => {
-                borrarCompaniaTbl(id);
+        if (await validarContactos(id)) {
 
-            })
-            .catch(error => {
+            await fetch(`http://localhost:3000/api/companies/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => response.json())
+                .then(response => {
+                    borrarCompaniaTbl(id);
+                    console.log('Compañía borrada correctamente');
+                })
+                .catch(error => {
 
-                console.error('Error eliminando compañía:', error);
+                    console.error('Error eliminando compañía:', error);
 
-            });
+                });
+        } else {
+            alert('No se puede eliminar la compañía pues tiene contactos asociados')
+        }
     }
 }
 
@@ -345,7 +351,7 @@ async function guardarCambiosCompania(compania) {
 }
 
 //Buscar las compañias que coincidan con el texto
-async function buscarCompania(txtBuscar) {
+async function buscarCompanias(txtBuscar) {
     let companias = [];
 
     await fetch(`http://localhost:3000/api/companies/?name=${txtBuscar}&limit=10&sort=names`, {
@@ -461,7 +467,7 @@ async function buscarCompania(id) {
         })
         .catch(error => {
 
-            console.error('Error editando compania:', error);
+            console.error('Error buscando compania:', error);
 
         });
 
@@ -472,6 +478,31 @@ async function buscarCompania(id) {
     await cargarCiudades(ubicacion.pais);
     document.getElementById('ciudad').value = ubicacion.ciudad;
 }
+
+async function validarContactos(idCompania) {
+
+    respuesta = await fetch(`http://localhost:3000/api/contacts/?company=${idCompania}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    }).then(response => response.json())
+        .then(response => {
+            console.log('Contactos asociadas a compañía ', response.doc);
+            return response.doc.length > 0 ? false : true;
+
+        })
+        .catch(error => {
+
+            console.error('Error validando contactos de compañía:', error);
+            //alert('Error cargando paises');
+        });
+
+    return respuesta;
+}
+
 
 /////////////////////eventos
 
@@ -502,13 +533,26 @@ btnGuardarCompania.addEventListener('click', e => {
 })
 
 btnBuscar.addEventListener('click', e => {
-    txtBuscar = document.getElementById('txt-buscar').value;
+    txtBuscarValor = document.getElementById('txt-buscar').value;
 
-    if (txtBuscar == '') {
+    if (txtBuscarValor == '') {
         alert('Por favor ingrese el nombre a buscar');
     }
     else {
-        buscarCompania(txtBuscar);
+        buscarCompanias(txtBuscarValor);
+    }
+});
+
+txtBuscar.addEventListener('keyup', e => {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+
+        if (txtBuscar.value == '') {
+            alert('Por favor ingrese el nombre a buscar');
+        }
+        else {
+            buscarCompanias(txtBuscar.value);
+        }
     }
 });
 

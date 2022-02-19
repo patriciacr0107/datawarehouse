@@ -8,6 +8,7 @@ const {
   createCity,
   updateCity,
   deleteCity,
+  deleteMany
 } = require('../controllers/city.controller');
 
 router.use(protect);
@@ -19,5 +20,7 @@ router
   .get(getCityById)
   .patch(restrictTo('admin'), updateCity)
   .delete(restrictTo('admin'), deleteCity);
+
+router.route('/delete-cities/country/:id').delete(deleteMany);
 
 module.exports = router;

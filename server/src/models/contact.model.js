@@ -20,7 +20,7 @@ const contactSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Pleas provide a valid email'],
+    validate: [validator.isEmail, 'Please provide a valid email'],
   },
   position: {
     type: String,
@@ -30,13 +30,11 @@ const contactSchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required: [true, 'Address is required'],
     trim: true,
     lowercase: true,
   },
   interest: {
     type: Number,
-    required: [true, 'Interest is required'],
     trim: true,
     lowercase: true,
   },
@@ -73,11 +71,14 @@ const contactSchema = new mongoose.Schema({
   city: {
     type: mongoose.Schema.ObjectId,
     ref: 'City',
-    required: true,
   },
 });
 
 contactSchema.pre(/^find/, function (next) {
+
+  /*const { region } = this._conditions
+  console.log('region ', region);*/
+
   this.populate({
     path: 'city company',
     select: '-__v',

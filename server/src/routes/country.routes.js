@@ -8,6 +8,7 @@ const {
   createCountry,
   updateCountry,
   deleteCountry,
+  deleteMany
 } = require('../controllers/country.controller');
 
 router.use(protect);
@@ -19,5 +20,7 @@ router
   .get(getCountryById)
   .patch(restrictTo('admin'), updateCountry)
   .delete(restrictTo('admin'), deleteCountry);
+
+router.route('/delete-countires/region/:id').delete(deleteMany);
 
 module.exports = router;
