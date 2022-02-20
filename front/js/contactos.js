@@ -24,6 +24,7 @@ const btnMostrarFiltros = document.getElementById('btn-mostrar-filtros');
 const btnExportar = document.getElementById('btn-exportar');
 const btnEliminar = document.getElementById('btn-eliminar');
 const cantidadPagina = document.getElementById('cantidad-pagina');
+const contenedorPaginacion = document.getElementById('contenedor-paginacion');
 
 ///////////////////Funciones
 
@@ -372,9 +373,10 @@ async function cargarContactos(cmpOrden, tipoOrden, limite, desde, filtro) {
     if (filtro == '') {
 
         totalPaginas = await calcularTotalPagina();
+        contenedorPaginacion.style.display = 'flex';
         cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total contactos ${contactosTotal.length})`;
     } else {
-        console.log('entro');
+        contenedorPaginacion.style.display = 'none';
         cantidadPagina.innerHTML = '';
     }
 
@@ -1067,6 +1069,7 @@ btnBuscar.addEventListener('click', e => {
     cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, filtros);
 
     filtrosBusqueda.style.display = 'none';
+    contenedorPaginacion.style.display = 'none';
     cantidadPagina.innerHTML = '';
 });
 

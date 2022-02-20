@@ -6,16 +6,49 @@ class APIFeatures {
 
   filter() {
     // 1A Filtering
-    const queryObj = { ...this.queryString };
+    let queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    let query = {};
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // 1B Advanced filtering
+    for (let a of Object.entries(queryObj)) {
+      console.log('queryObj', typeof a[0]);
 
-    let queryStr = JSON.stringify(queryObj);
+      switch (a[0]) {
+        case 'region':
+          query[a[0]] = a[1];
+          break;
+
+        case 'country':
+          query[a[0]] = a[1];
+          break;
+
+        case 'city':
+          query[a[0]] = a[1];
+          break;
+
+        case 'company':
+          query[a[0]] = a[1];
+          break;
+
+        case 'interest':
+          query[a[0]] = a[1];
+          break;
+
+        default:
+          query[a[0]] = new RegExp(a[1], 'i');
+          break;
+      }
+    }
+
+    console.log('query', query);
+    queryObj = query;
+    /* let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt|text)\b/g, (match) => `$${match}`);
 
-    this.query.find(JSON.parse(queryStr));
+    this.query.find(JSON.parse(queryStr)); */
+    this.query.find(queryObj);
 
     return this;
   }

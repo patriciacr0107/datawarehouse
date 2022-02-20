@@ -14,6 +14,7 @@ btnBuscar = document.getElementById('btn-buscar');
 filasPg = document.getElementById('filas-pg');
 cantidadPagina = document.getElementById('cantidad-pagina');
 txtBuscar = document.getElementById('txt-buscar');
+contenedorPaginacion = document.getElementById('contenedor-paginacion');
 
 ///////////////////Funciones
 
@@ -262,7 +263,7 @@ async function cargarUsuarios(pagina, cmpOrden, tipoOrden, limite) {
     });
 
   totalPaginas = await calcularTotalPagina();
-
+  contenedorPaginacion.style.display = 'flex';
   cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total usuarios ${usuariosTotal.length})`;
 }
 
@@ -321,7 +322,7 @@ async function cargarUsuariosFiltro(valor) {
     });
 
   // totalPaginas = await calcularTotalPagina();
-
+  contenedorPaginacion.style.display = 'none';
   cantidadPagina.innerHTML = '';
 }
 

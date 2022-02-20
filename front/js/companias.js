@@ -15,6 +15,7 @@ btnBuscar = document.getElementById('btn-buscar');
 filasPg = document.getElementById('filas-pg');
 txtBuscar = document.getElementById('txt-buscar');
 cantidadPagina = document.getElementById('cantidad-pagina');
+contenedorPaginacion = document.getElementById('contenedor-paginacion');
 //////////////////funciones
 
 async function buscarUbicacion(idCiudad) {
@@ -154,7 +155,7 @@ async function cargarCompanias(limite, tipoOrden, campoOrden, desde) {
     });
 
   totalPaginas = await calcularTotalPagina();
-
+  contenedorPaginacion.style.display = 'flex';
   cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total compañías ${companiasTotal.length})`;
 }
 
@@ -415,6 +416,7 @@ async function buscarCompanias(txtBuscar) {
       console.error('Error buscando compañias:', error);
     });
   cantidadPagina.innerHTML = ``;
+  contenedorPaginacion.style.display = 'none';
 }
 
 function crearCampoTitulo(campo) {
@@ -640,6 +642,7 @@ async function buscarCompaniasFiltro(valor) {
   //   totalPaginas = await calcularTotalPagina();
 
   cantidadPagina.innerHTML = ``;
+  contenedorPaginacion.style.display = 'none';
 }
 
 /////////////////////eventos

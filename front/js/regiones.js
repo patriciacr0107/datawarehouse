@@ -172,8 +172,8 @@ async function calcularTotalPagina() {
 
 async function cargarRegion(limite, region, pagina) {
     let url = region != '' ? `http://localhost:3000/api/regions/?name=${region}` :
-        (limite == 'todas' ? `http://localhost:3000/api/regions/?page=${pagina}` :
-            `http://localhost:3000/api/regions/?page=${pagina}&limit=${limite}`);
+        (limite == 'todas' ? `http://localhost:3000/api/regions/filter/?page=${pagina}` :
+            `http://localhost:3000/api/regions/filter/?page=${pagina}&limit=${limite}`);
 
     console.log('url', url);
 
@@ -1118,6 +1118,7 @@ async function cambiarPagina(valor) {
       } */
 
     console.log('desdePagina antes de cargar: ', desdePagina);
+    limpiarTblRegiones();
     cargarDatos(filasPg.value, '', desdePagina);
 }
 
@@ -1188,4 +1189,5 @@ txtBuscar.addEventListener('keyup', e => {
 });
 
 //cargarRegion().then(ciudades => console.log('a', ciudades));
+limpiarTblRegiones();
 cargarDatos(filasPg.value, '', desdePagina);
