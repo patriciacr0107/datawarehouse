@@ -308,7 +308,7 @@ body {
     height: 100%;
     display: grid;
     grid-template-columns: 35% 35% 30%;
-    grid-template-rows: auto auto auto auto auto auto; 
+    grid-template-rows: 30px 40px 30px 40px auto auto; 
     color: var(--color-fuente-titulos);
     justify-items: start;
     align-items: end;

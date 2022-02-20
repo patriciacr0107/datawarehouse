@@ -1,6 +1,9 @@
 ///////////////////variables globales
 let token = localStorage.getItem("key");
-
+let desdePagina = 1;
+let paginaActual = 1;
+let totalPaginas = 0;
+let regionesTotal = [];
 
 ///////////////////Referencias a HTML
 tblRegiones = document.getElementById('tbl-regiones');
@@ -8,6 +11,7 @@ addRegionBtn = document.getElementById('add-region-btn');
 filasPg = document.getElementById('filas-pg');
 btnBuscar = document.getElementById('btn-buscar');
 txtBuscar = document.getElementById('txt-buscar');
+cantidadPagina = document.getElementById('cantidad-pagina');
 
 ///////////////////Funciones
 
@@ -127,12 +131,51 @@ function mostrarDatos(ciudades) {
     }
 }
 
-async function cargarRegion(limite, region) {
+// Obtiene las regiones sin filtrar
+async function cargarTotalRegiones() {
+
+    let regiones = await fetch(`http://localhost:3000/api/regions/`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            if (response.status == 'error' || response.status == 'fail') {
+                throw new Error(response.message);
+            }
+            return response.doc
+        })
+        .catch((error) => {
+            console.error('Error calculando total:', error);
+        });
+
+    return regiones;
+}
+
+async function calcularTotalPagina() {
+    regionesTotal = await cargarTotalRegiones();
+
+    if (regionesTotal.length < filasPg.value) {
+        totalPaginas = 1;
+    } else {
+        totalPaginas =
+            Math.trunc(regionesTotal.length / filasPg.value) +
+            (regionesTotal.length % filasPg.value > 0 ? 1 : 0);
+    }
+
+    return totalPaginas;
+}
+
+async function cargarRegion(limite, region, pagina) {
     let url = region != '' ? `http://localhost:3000/api/regions/?name=${region}` :
-        (limite == 'todas' ? `http://localhost:3000/api/regions/` :
-            `http://localhost:3000/api/regions/?limit=${limite}`);
+        (limite == 'todas' ? `http://localhost:3000/api/regions/?page=${pagina}` :
+            `http://localhost:3000/api/regions/?page=${pagina}&limit=${limite}`);
 
-
+    console.log('url', url);
 
 
     let regiones = await fetch(url, {
@@ -156,6 +199,16 @@ async function cargarRegion(limite, region) {
             console.error('Error:', error);
             alert('Error cargando region');
         });
+
+
+    if (region == '' && limite != 'todas') {
+        totalPaginas = await calcularTotalPagina();
+        cantidadPagina.innerHTML = `Pag ${desdePagina} de ${totalPaginas} (Total regiones ${regionesTotal.length})`;
+
+    } else {
+        cantidadPagina.innerHTML = '';
+    }
+
     return regiones;
 }
 
@@ -323,8 +376,8 @@ async function cargarCiudades(paises) {
 
 }
 
-async function cargarDatos(limite, region) {
-    let regiones = await cargarRegion(limite, region);
+async function cargarDatos(limite, region, pagina) {
+    let regiones = await cargarRegion(limite, region, pagina);
     //console.table(regiones);
     let paises = await cargarPaises(regiones);
     //console.table(paises);
@@ -522,7 +575,8 @@ async function eliminarRegion(id) {
             }
             console.log('Region borrada correctamente');
             limpiarTblRegiones()
-            cargarDatos('todas', '');
+            cargarDatos('todas', '', desdePagina);
+
             //filaRegion = document.getElementById(`reg-${id}`);
             //filaRegion.remove();
         })
@@ -585,7 +639,8 @@ async function borrarPais(id, carga) {
 
             if (carga) {
                 limpiarTblRegiones()
-                cargarDatos('todas', '');
+                cargarDatos('todas', '', desdePagina);
+
             }
 
             //filaPais = document.getElementById(`reg-${id}`);
@@ -1038,6 +1093,35 @@ async function validarCiudad(idCiudad) {
 
 }
 
+async function cambiarPagina(valor) {
+
+
+    totalPaginas = await calcularTotalPagina();
+
+    console.log('totalPaginas: ', totalPaginas);
+
+    desdePagina += valor;
+    paginaActual += valor;
+
+    if (desdePagina <= 0) {
+        desdePagina = 1;
+    } else if (desdePagina > totalPaginas) {
+        desdePagina -= valor;
+    }
+
+    console.log('desdePagina', desdePagina);
+
+    /*   if (paginaActual < 0) {
+        paginaActual = 1;
+      } else if (paginaActual > totalPaginas) {
+        paginaActual -= valor;
+      } */
+
+    console.log('desdePagina antes de cargar: ', desdePagina);
+    cargarDatos(filasPg.value, '', desdePagina);
+}
+
+
 ///////////////////////////eventos
 
 addRegionBtn.addEventListener('click', e => {
@@ -1070,7 +1154,8 @@ addRegionBtn.addEventListener('click', e => {
 
 filasPg.addEventListener('change', e => {
     limpiarTblRegiones();
-    cargarDatos(filasPg.value, '');
+    desdePagina = 1;
+    cargarDatos(filasPg.value, '', desdePagina);
 });
 
 btnBuscar.addEventListener('click', e => {
@@ -1082,7 +1167,8 @@ btnBuscar.addEventListener('click', e => {
     else {
         //buscarRegion(txtBuscar);
         limpiarTblRegiones();
-        cargarDatos('', txtBuscarValor);
+        cargarDatos('', txtBuscarValor, desdePagina);
+
     }
 })
 
@@ -1095,10 +1181,11 @@ txtBuscar.addEventListener('keyup', e => {
         }
         else {
             limpiarTblRegiones();
-            cargarDatos('', txtBuscar.value);
+            cargarDatos('', txtBuscar.value, desdePagina);
+
         }
     }
 });
 
 //cargarRegion().then(ciudades => console.log('a', ciudades));
-cargarDatos(2, '');
+cargarDatos(filasPg.value, '', desdePagina);

@@ -344,7 +344,6 @@ async function cargarContactos(cmpOrden, tipoOrden, limite, desde, filtro) {
     url = filtro != '' ? `http://localhost:3000/api/contacts/?${filtro}&limit=${limite}&sort=${tipoOrden}${cmpOrden}` :
         `http://localhost:3000/api/contacts/?page=${desde}&limit=${limite}&sort=${tipoOrden}${cmpOrden}`;
 
-    console.log(url);
 
     await fetch(url, {
         method: 'GET',
@@ -1062,7 +1061,7 @@ btnBuscar.addEventListener('click', e => {
         filtros += filtros == '' ? `interest=${interesBusq}` : `&interest=${interesBusq}`;
 
     }
-    console.log('filtros', filtros);
+    //console.log('filtros', filtros);
     //cargarContactos(filtros, 'ASC', filasPg.value);
     desdePagina = 1;
     cargarContactos(ordenamiento, 'ASC', filasPg.value, desdePagina, filtros);

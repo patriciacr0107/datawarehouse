@@ -284,11 +284,12 @@
                     </tr>-->
                 </table>
             </div>
-            <div id="cantidad-pagina" class="cantidad-pagina">1 - 10 de 30 regiones
-                <span class="material-icons-outlined material-icons icono-ordenar">
+            <div class="cantidad-pagina">
+                <span class="material-icons-outlined material-icons icono-ordenar" onclick="cambiarPagina(-1)">
                     navigate_before
                 </span>
-                <span class="material-icons-outlined material-icons icono-ordenar">
+                <span id="cantidad-pagina">1 - 10 de 30 regiones</span>
+                <span class="material-icons-outlined material-icons icono-ordenar" onclick="cambiarPagina(1)">
                     navigate_next
                 </span>
 
